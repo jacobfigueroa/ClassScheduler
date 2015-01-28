@@ -1,3 +1,4 @@
+<? $subject or die(); ?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -13,10 +14,21 @@
 
   	<h1><center>Perfect Schedule Creator</center></h1>
 	
-	<p><a href="addCourse.html">Click here to start your schedule</a></p>
+	<div id="courseList">
+	</div>
+	
+	<p>Click here to add a course</p>
+	<button type="button" id="submitbutton">Click Me!</button>
+	<?php foreach( $subject as $s ) { ?>
+	<tr>
+		<td><?=$s->SubjectName?></td>
+	</tr>
+	<?php } ?>
+
 
   	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+	<script src="CourseAdder.js"></script>
 
 	</body>
 </html>
