@@ -16,3 +16,20 @@ $( '#submitbutton' ).click(function() {
 	$( '#courseList' ).prepend( newLine );
 	//$( '#courseList' ).prepend( '<div>' + '<p>' + 'Select course major: ' + '<select>' + '<option value="CSCI">' + 'CSCI' + '</option>' + '<option value="Math">' + 'Math' + '</option>' +'</p>' + '</div>');  
 } );
+
+$('select').change(function(){
+	hello = "<p>hello</p>"
+	$('#courseList').append(hello);
+
+	subject = $(this).val();
+	//$( '#courseList' ).prepend( value );
+	$.ajax( { 
+		'type' : 'POST',
+		'url' : 'getCourses.php',
+		'data' : { 'subject' : subject} }
+		).done( function( data ) {
+			hello = "<p>hello121</p>"
+			$('#courseList').append(hello);
+			$('#courseList').append(data);
+		} );
+});

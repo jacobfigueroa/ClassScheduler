@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>JacobFigueroa.com</title>
+    <title>Perfect Class Scheduler</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     	
   </head>
@@ -15,15 +15,24 @@
   	<h1><center>Perfect Schedule Creator</center></h1>
 	
 	<div id="courseList">
-	</div>
 	
-	<p>Click here to add a course</p>
-	<button type="button" id="submitbutton">Click Me!</button>
+		<button type="button" id="submitbutton">Click Me!</button>
+
+		<select>
+			<?php foreach ($subject as $s) { ?>
+				<option value="<?=$s->SubjectName?>"><?=$s->SubjectName?></option>
+			<?php } ?>
+		</select>
+
+	</div>
+
+	<!--
 	<?php foreach( $subject as $s ) { ?>
 	<tr>
 		<td><?=$s->SubjectName?></td>
 	</tr>
 	<?php } ?>
+	-->
 
 
   	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>

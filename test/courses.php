@@ -64,6 +64,18 @@ class course
 		}
 		return $result;
 	}
+
+	static function findCoursesBySubject($subject, $dbh)
+	{
+		$stmt = $dbh->prepare( "select * from ".course::$tableName." where Subject = :Subject" );
+		$stmt->bindParam( ':Subject', $subject );
+		$stmt->execute();
+
+		$courses = new course();
+		$row = $stmt->fetch();
+		$courses->copyFromRow( $row );
+		return $courses;
+	}
 	
 	/* static function getSubjects( $dbh ) {
 		$stmt = $dbh->prepare( "select distinct subject from TABLE1" );
