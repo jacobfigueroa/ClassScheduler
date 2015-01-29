@@ -18,18 +18,19 @@ $( '#submitbutton' ).click(function() {
 } );
 
 $('select').change(function(){
-	hello = "<p>hello</p>"
+	hello = "<p>You selected something..</p>"
 	$('#courseList').append(hello);
 
 	subject = $(this).val();
 	//$( '#courseList' ).prepend( value );
 	$.ajax( { 
 		'type' : 'POST',
-		'url' : 'getCourses.php',
+		'url' : 'handlers/getCourses.php',
 		'data' : { 'subject' : subject} }
 		).done( function( data ) {
-			hello = "<p>hello121</p>"
+			hello = "<p>AJAX is done...</p>"
 			$('#courseList').append(hello);
+
 			$('#courseList').append(data);
 		} );
 });

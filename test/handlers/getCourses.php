@@ -1,6 +1,6 @@
 <?php
-require_once( "DB.php" );
-require_once( "courses.php" );
+require_once( "../models/DB.php" );
+require_once( "../models/courses.php" );
 
 $subject = $_POST['subject'];
 #get list of courses from database
