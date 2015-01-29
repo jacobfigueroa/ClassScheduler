@@ -28,9 +28,10 @@ $('select').change(function(){
 		'url' : 'handlers/getCourses.php',
 		'data' : { 'subject' : subject} }
 		).done( function( data ) {
-			hello = "<p>AJAX is done...</p>"
+			hello = "<p>AJAX is done... V</p>"
 			$('#courseList').append(hello);
-
 			$('#courseList').append(data);
+			bye = "<p>^</p>";
+			$('#courseList').append(bye);
 		} );
 });
