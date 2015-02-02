@@ -17,21 +17,23 @@ $( '#submitbutton' ).click(function() {
 	//$( '#courseList' ).prepend( '<div>' + '<p>' + 'Select course major: ' + '<select>' + '<option value="CSCI">' + 'CSCI' + '</option>' + '<option value="Math">' + 'Math' + '</option>' +'</p>' + '</div>');  
 } );
 
-$('select').change(function(){
-	hello = "<p>You selected something..</p>"
-	$('#courseList').append(hello);
-
+$('#subjectListSelect').change(function(){
 	subject = $(this).val();
-	//$( '#courseList' ).prepend( value );
 	$.ajax( { 
 		'type' : 'POST',
 		'url' : 'handlers/getCourses.php',
 		'data' : { 'subject' : subject} }
 		).done( function( data ) {
-			hello = "<p>AJAX is done... V</p>"
-			$('#courseList').append(hello);
-			$('#courseList').append(data);
-			bye = "<p>^</p>";
-			$('#courseList').append(bye);
+			//$('#courseList').append(data);
+			$('#courseList').empty();
+
+			var classList = '<select>'
+			var obj = $.parseJSON(data);
+			for(var i = 0; i < obj.length; i++)
+			{
+				classList += '<option value = "blah">' + obj[i].CourseNumber + ' ' + obj[i].Title + '</option>'
+			}
+			classList += '</select>'
+			$('#courseList').append(classList);
 		} );
 });

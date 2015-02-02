@@ -6,8 +6,9 @@ $subject = $_POST['subject'];
 #get list of courses from database
 $courses = course::findDistinctCoursesBySubject($subject, $dbh);
 
-//var_dump($courses);
+//echo var_dump($courses);
 echo json_encode($courses);
+//echo ($courses);
 //echo json_encode( array( 'status' => 'fail' ) );
 //$array['courses'] = $courses;
 
