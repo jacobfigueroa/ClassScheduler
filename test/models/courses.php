@@ -78,6 +78,22 @@ class course
 		}
 		return $result;
 	}
+
+	static function findDistinctCoursesBySubject($subject, $dbh)
+	{
+		//SELECT DISTINCT CourseNumber,Title FROM `TABLE1` WHERE Subject = "CSCI"
+		$stmt = $dbh->prepare( "SELECT DISTINCT CourseNumber,Title FROM ".course::$tableName." WHERE Subject = :Subject" );
+		$stmt->bindParam( ':Subject', $subject );
+		$stmt->execute();
+
+		while( $row = $stmt->fetch() ) {
+			$course = new course();
+			$course->CourseNumber = $row['CourseNumber'];
+			$course->Title = $row['Title'];
+			$result[] = $course;
+		}
+		return $result;
+	}
 	
 	/* static function getSubjects( $dbh ) {
 		$stmt = $dbh->prepare( "select distinct subject from TABLE1" );
