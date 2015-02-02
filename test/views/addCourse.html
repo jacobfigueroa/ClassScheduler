@@ -14,19 +14,24 @@
 
   	<h1><center>Perfect Schedule Creator</center></h1>
 	
-	<div id="subjectList">
-	
-		<button type="button" id="submitbutton">Click Me!</button>
+	<div id = "courseSelector">
+		<div id = "course0">
+			<div id="subjectList">
+		
+				<button type="button" id="submitbutton">Click Me!</button>
 
-		<select id="subjectListSelect">
-			<?php foreach ($subject as $s) { ?>
-				<option value="<?=$s->SubjectName?>"><?=$s->SubjectName?></option>
-			<?php } ?>
-		</select>
+				<select id="subjectListSelect">
+					<option value="NULL">Subject</option>
+					<?php foreach ($subject as $s) { ?>
+						<option value="<?=$s->SubjectName?>"><?=$s->SubjectName?></option>
+					<?php } ?>
+				</select>
 
+			</div>
+
+			<div id="courseList"></div>
+		</div>
 	</div>
-
-	<div id="courseList"></div>
 
 	<!--
 	<?php foreach( $subject as $s ) { ?>
