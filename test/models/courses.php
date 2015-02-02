@@ -71,10 +71,12 @@ class course
 		$stmt->bindParam( ':Subject', $subject );
 		$stmt->execute();
 
-		$courses = new course();
-		$row = $stmt->fetch();
-		$courses->copyFromRow( $row );
-		return $courses;
+		while( $row = $stmt->fetch() ) {
+			$course = new course();
+			$course->copyFromRow( $row );
+			$result[] = $course;
+		}
+		return $result;
 	}
 	
 	/* static function getSubjects( $dbh ) {

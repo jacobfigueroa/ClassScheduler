@@ -6,6 +6,7 @@ $subject = $_POST['subject'];
 #get list of courses from database
 $courses = course::findCoursesBySubject($subject, $dbh);
 var_dump($courses);
+//echo json_encode( array( 'status' => 'fail' ) );
 //$array['courses'] = $courses;
 
 //header( "Content-type: text/json" );
