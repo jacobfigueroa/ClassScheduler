@@ -61,9 +61,11 @@ $("#submitClasses").click(function() {
 			).done( function(result) {
 				$("#results").append("<p> After AJAX call... </p>")
 				var schedule = $.parseJSON(result);
+				$("#results").append(schedule)
+				/*
 				for(var i = 0; i < schedule.length; i++)
 				{
 					$("#results").append("<p>" + schedule[i][0] + " " + schedule[i][1] + "</p>")
-				}
+				}*/
 			});
 });
