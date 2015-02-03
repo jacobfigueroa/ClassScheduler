@@ -17,8 +17,8 @@ $( '#submitbutton' ).click(function() {
 	//$( '#courseList' ).prepend( '<div>' + '<p>' + 'Select course major: ' + '<select>' + '<option value="CSCI">' + 'CSCI' + '</option>' + '<option value="Math">' + 'Math' + '</option>' +'</p>' + '</div>');  
 } );
 
-$('#subjectListSelect').change(function(){
-	subject = $(this).val();
+$('.subjectListSelect').change(function(){
+	var subject = $(this).val();
 	$.ajax( { 
 		'type' : 'POST',
 		'url' : 'handlers/getCourses.php',
@@ -27,6 +27,7 @@ $('#subjectListSelect').change(function(){
 			$('#courseList').empty();
 			var classes = $.parseJSON(data);
 			var classList = $("<select>") //Instatiate a select
+			classList.attr("id","classListSelect"+courseCount)
 			for(var i = 0; i < classes.length; i++)
 			{
 				var newOption = $("<option>")
@@ -34,5 +35,5 @@ $('#subjectListSelect').change(function(){
 				classList.append(newOption)
 			}
 			$('#courseList').append(classList);
-		} );
+		});
 });
