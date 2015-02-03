@@ -1,4 +1,4 @@
-
+var courseCount = 0
 $( '#submitbutton' ).click(function() { 
 	var newLine;
 	newLine = '<div>' + '<p>' + 'Select course major: ' + '<select>'
@@ -24,16 +24,15 @@ $('#subjectListSelect').change(function(){
 		'url' : 'handlers/getCourses.php',
 		'data' : { 'subject' : subject} }
 		).done( function( data ) {
-			//$('#courseList').append(data);
 			$('#courseList').empty();
-
-			var classList = '<select>'
-			var obj = $.parseJSON(data);
-			for(var i = 0; i < obj.length; i++)
+			var classes = $.parseJSON(data);
+			var classList = $("<select>") //Instatiate a select
+			for(var i = 0; i < classes.length; i++)
 			{
-				classList += '<option value = "blah">' + obj[i].CourseNumber + ' ' + obj[i].Title + '</option>'
+				var newOption = $("<option>")
+				newOption.attr("value", classes[i].CourseNumber).text(classes[i].CourseNumber + " " + classes[i].Title)
+				classList.append(newOption)
 			}
-			classList += '</select>'
 			$('#courseList').append(classList);
 		} );
 });
