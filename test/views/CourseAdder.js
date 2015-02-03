@@ -40,3 +40,7 @@ $("#addClass").click(function() {
 	newCourse.children("#subjectListSelect0").attr("id","subjectListSelect"+courseCount)
 	$("#courseSelector").append(newCourse)
 });
+
+$("#submitClasses").click(function() {
+	$("#results").html("<p>Congrats you've submitted something. Here's your courses:</p>")
+});
