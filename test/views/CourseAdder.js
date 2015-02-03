@@ -34,15 +34,19 @@ $("#courseSelector").on("change","select", function(){
 $("#addClass").click(function() {
 	courseCount += 1
 	var newCourse = $("#course0").clone()
+
+	//update attributes and child attributes
 	newCourse.attr("id","course"+courseCount)
 	newCourse.children("#courseList0").attr("id","courseList"+courseCount)
 	newCourse.children("#classListSelect0").attr("id","classListSelect"+courseCount)
 	newCourse.children("#subjectListSelect0").attr("id","subjectListSelect"+courseCount)
+
 	$("#courseSelector").append(newCourse)
 });
 
 $("#submitClasses").click(function() {
-	$("#results").html("<p>Congrats you've submitted something. Here's your courses:</p>")
+
+	$("#results").empty()
 	var courseArray = []
 	for(var i = 0; i <= courseCount; i++)
 	{
@@ -54,12 +58,17 @@ $("#submitClasses").click(function() {
 
 	console.log(courseArray)
 	
+	//Send courses to handler
 	$.ajax( { 
 			'type' : 'POST',
 			'url' : 'handlers/getSchedule.php',
 			'data' : { 'courses' : courseArray} }
 			).done( function(result) {
-				$("#results").append("<p> After AJAX call... </p>")
+				//return result
+				var serverMessage = $("<p>")
+				serverMessage.html("After the AJAX call the server returned this:")
+				$("#results").append(serverMessage)
+
 				var schedule = $.parseJSON(result);
 				$("#results").append(schedule)
 				/*
