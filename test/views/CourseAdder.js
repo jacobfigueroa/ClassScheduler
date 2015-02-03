@@ -43,4 +43,27 @@ $("#addClass").click(function() {
 
 $("#submitClasses").click(function() {
 	$("#results").html("<p>Congrats you've submitted something. Here's your courses:</p>")
+	var courseArray = []
+	for(var i = 0; i <= courseCount; i++)
+	{
+		var subjectListSelect = "#subjectListSelect" + i
+		var classListSelect = "#classListSelect" + i
+		//$("#results").append("<p>" + $(subjectListSelect).val() + " " + $(classListSelect).val() + "</p>")
+		courseArray[i] = [$(subjectListSelect).val(),$(classListSelect).val()]
+	}
+
+	console.log(courseArray)
+	
+	$.ajax( { 
+			'type' : 'POST',
+			'url' : 'handlers/getSchedule.php',
+			'data' : { 'courses' : courseArray} }
+			).done( function(result) {
+				$("#results").append("<p> After AJAX call... </p>")
+				var schedule = $.parseJSON(result);
+				for(var i = 0; i < schedule.length; i++)
+				{
+					$("#results").append("<p>" + schedule[i][0] + " " + schedule[i][1] + "</p>")
+				}
+			});
 });
