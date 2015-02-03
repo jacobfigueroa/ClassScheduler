@@ -15,31 +15,22 @@
   	<h1><center>Perfect Schedule Creator</center></h1>
 	
 	<div id = "courseSelector">
-		<div id="subjectList">
-	
-			<button type="button" id="submitbutton">Click Me!</button>
 
-			<select class = "subjectListSelect" id="subjectListSelect0">
-				<option value="NULL">Subject</option>
-				<?php foreach ($subject as $s) { ?>
-					<option value="<?=$s->SubjectName?>"><?=$s->SubjectName?></option>
-				<?php } ?>
-			</select>
+		<select class = "subjectListSelect" id="subjectListSelect0">
+			<option value="NULL">Subject</option>
+			<?php foreach ($subject as $s) { ?>
+				<option value="<?=$s->SubjectName?>"><?=$s->SubjectName?></option>
+			<?php } ?>
+		</select>
 
-			<!--<select class="subjectListSelect" id="subjectListSelect1"><option>dog</option> <option>cat</option></select>-->
-
-		</div>
+		<!--<select class="subjectListSelect" id="subjectListSelect1"><option>dog</option> <option>cat</option></select>-->
 
 		<div id="courseList"></div>
 	</div>
 
-	<!--
-	<?php foreach( $subject as $s ) { ?>
-	<tr>
-		<td><?=$s->SubjectName?></td>
-	</tr>
-	<?php } ?>
-	-->
+	<button type="button" id="submitClasses">Submit</button>
+
+	<div id = "results"></div>
 
 
   	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
