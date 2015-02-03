@@ -17,7 +17,8 @@ $( '#submitbutton' ).click(function() {
 	//$( '#courseList' ).prepend( '<div>' + '<p>' + 'Select course major: ' + '<select>' + '<option value="CSCI">' + 'CSCI' + '</option>' + '<option value="Math">' + 'Math' + '</option>' +'</p>' + '</div>');  
 } );
 
-$('.subjectListSelect').change(function(){
+$('.subjectListSelect').on( "change", function() {
+//$('.subjectListSelect').change(function(){
 	var subject = $(this).val()
 	var id = $(this).attr("id")
 	var idNumber = id.substr(id.length-1,id.length-1) //start,end. Returns last character
