@@ -18,7 +18,10 @@ $( '#submitbutton' ).click(function() {
 } );
 
 $('.subjectListSelect').change(function(){
-	var subject = $(this).val();
+	var subject = $(this).val()
+	var id = $(this).attr("id")
+	var idNumber = id.substr(id.length-1,id.length-1) //start,end. Returns last character
+	console.log(idNumber)
 	$.ajax( { 
 		'type' : 'POST',
 		'url' : 'handlers/getCourses.php',
