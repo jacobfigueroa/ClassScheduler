@@ -16,19 +16,21 @@
 	
 	<div id = "courseSelector">
 
-		<select class = "subjectListSelect" id="subjectListSelect0">
-			<option value="NULL">Subject</option>
-			<?php foreach ($subject as $s) { ?>
-				<option value="<?=$s->SubjectName?>"><?=$s->SubjectName?></option>
-			<?php } ?>
-		</select>
+		<div id = "course0">
+			<select class = "subjectListSelect" id="subjectListSelect0">
+				<option value="NULL">Subject</option>
+				<?php foreach ($subject as $s) { ?>
+					<option value="<?=$s->SubjectName?>"><?=$s->SubjectName?></option>
+				<?php } ?>
+			</select>
 
-		<!--<select class="subjectListSelect" id="subjectListSelect1"><option>dog</option> <option>cat</option></select>-->
-
-		<div id="courseList"></div>
+			<div id="courseList0"></div>
+			<br>
+		</div>
+		
 	</div>
-
-	<button type="button" id="submitClasses">Submit</button>
+	<button type ="button" id ="addClass">Add a class</button>
+	<button type ="button" id ="submitClasses">Submit</button>
 
 	<div id = "results"></div>
 
