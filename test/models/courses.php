@@ -95,6 +95,7 @@ class course
 		return $result;
 	}
 	
+	/*
 	static function generateSchedule($courses, $dbh)
 	{
 		foreach ($courses as $c)
@@ -114,7 +115,7 @@ class course
 		return $result;
 		
 		
-	}
+	}*/
 	
 	/* static function getSubjects( $dbh ) {
 		$stmt = $dbh->prepare( "select distinct subject from TABLE1" );
