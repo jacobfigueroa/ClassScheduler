@@ -113,22 +113,25 @@ class course
 			}
 		}
 		return $result;
-		
-		
 	}
-	/*
-	static function getSubjects( $dbh ) {
-		$stmt = $dbh->prepare( "select distinct subject from TABLE1" );
-		$stmt->execute();
-		
-		$result = array();
-		while( $row = $stmt->fetch() ) {
-			$course = new course();
-			$course->copyFromRow( $row );
-			$result[] = $course;
+	
+	/* static function chooseASection($schedule)
+	{
+		$flag = false;
+		$temp = new course();
+		foreach($schedule as $s)
+		{
+			if($temp->Title != $s->Title)
+			{
+				$temp->copyFromRow($s);
+				$result[] = $temp;
+			}
+			
 		}
+		echo $result;
 		return $result;
-	}*/
+	} */
+
 
 
 }

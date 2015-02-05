@@ -7,7 +7,7 @@ $courses = $_POST['courses'];
 //Do php stuff.
 //What the code might look like?
 $schedule = course::generateSchedule($courses,$dbh);
-
+$sections = course::chooseASection($schedule);
 
 //For now:
 //echo json_encode($courses);
