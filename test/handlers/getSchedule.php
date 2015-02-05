@@ -6,11 +6,11 @@ $courses = $_POST['courses'];
 
 //Do php stuff.
 //What the code might look like?
-//$schedule = course::generateSchedule($courses,$dbh);
+$schedule = course::generateSchedule($courses,$dbh);
 
 
 //For now:
-echo json_encode($courses);
+//echo json_encode($courses);
 //Later change it to:
-//echo json_encode($schedule);
+echo json_encode($schedule);
 ?>

@@ -95,14 +95,14 @@ class course
 		return $result;
 	}
 	
-	/*
+	
 	static function generateSchedule($courses, $dbh)
 	{
 		foreach ($courses as $c)
 		{
 			$stmt = $dbh->prepare( "SELECT * FROM ".course::$tableName." WHERE Subject = :Subject AND CourseNumber = :CourseNumber" );
-			$stmt->bindParam( ':Subject', $c->[0] );
-			$stmt->bindParam( ':Subject', $c->[1] );
+			$stmt->bindParam( ':Subject', $c[0] );
+			$stmt->bindParam( ':CourseNumber', $c[1] );
 			$stmt->execute();
 			
 			while( $row = $stmt->fetch() ) 
@@ -115,9 +115,9 @@ class course
 		return $result;
 		
 		
-	}*/
-	
-	/* static function getSubjects( $dbh ) {
+	}
+	/*
+	static function getSubjects( $dbh ) {
 		$stmt = $dbh->prepare( "select distinct subject from TABLE1" );
 		$stmt->execute();
 		
@@ -128,7 +128,7 @@ class course
 			$result[] = $course;
 		}
 		return $result;
-	} */
+	}*/
 
 
 }

@@ -5,7 +5,7 @@ $("#courseSelector").on("change","select", function(){
 		var subject = $(this).val()
 		var id = $(this).attr("id")
 		var idNumber = id.substr(id.length-1,id.length-1) //start,end. Returns last character
-		console.log(idNumber)
+		//console.log(idNumber)
 
 		//Send subject selected, return list of courses associated with that subject
 		$.ajax( { 
@@ -70,7 +70,7 @@ $("#submitClasses").click(function() {
 				$("#results").append(serverMessage)
 
 				var schedule = $.parseJSON(result);
-				$("#results").append(schedule)
+				$("#results").append(result)
 				/*
 				for(var i = 0; i < schedule.length; i++)
 				{
