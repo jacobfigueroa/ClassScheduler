@@ -1,0 +1,44 @@
+<? $subject or die(); ?>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Perfect Class Scheduler</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    	
+  </head>
+	<body>
+
+  	<h1><center>Perfect Schedule Creator</center></h1>
+	
+	<div id = "courseSelector">
+
+		<div id = "course0">
+			<select class = "subjectListSelect" id="subjectListSelect0">
+				<option value="NULL">Subject</option>
+				<?php foreach ($subject as $s) { ?>
+					<option value="<?=$s->SubjectName?>"><?=$s->SubjectName?></option>
+				<?php } ?>
+			</select>
+
+			<div id="courseList0"></div>
+			<br>
+		</div>
+
+	</div>
+	<button type ="button" id ="addClass">Add a class</button>
+	<button type ="button" id ="submitClasses">Submit</button>
+
+	<br>
+	<div id = "results"></div>
+
+
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+	<script src="views/CourseAdder.js"></script>
+
+	</body>
+</html>
