@@ -26,7 +26,18 @@ $("#courseSelector").on("change","select", function(){
 					classList.append(newOption)
 				}
 
+				var requiredCheckBox = $("<input>")
+				requiredCheckBox.attr("type","checkbox")
+				requiredCheckBox.attr("id","requiredCheckBox"+courseCount)
+
+				var onlineCheckBox = $("<input>")
+				onlineCheckBox.attr("type","checkbox")
+				onlineCheckBox.attr("id","onlineCheckBox"+courseCount)
+
+
 				$(courseList).append(classList);
+				$(courseList).append(requiredCheckBox);
+				$(courseList).append(onlineCheckBox);
 			});
 	}
 });
@@ -38,8 +49,13 @@ $("#addClass").click(function() {
 	//update attributes and child attributes
 	newCourse.attr("id","course"+courseCount)
 	newCourse.children("#courseList0").attr("id","courseList"+courseCount)
-	newCourse.children("#classListSelect0").attr("id","classListSelect"+courseCount)
+
 	newCourse.children("#subjectListSelect0").attr("id","subjectListSelect"+courseCount)
+	newCourse.children("#classListSelect0").attr("id","classListSelect"+courseCount)
+
+	//Update checkboxes
+	//newCourse.children("#requiredCheckBox0").attr("id","requiredCheckBox"+courseCount)
+	//newCourse.children("#onlineCheckBox0").attr("id","onlineCheckBox"+courseCount)
 
 	$("#courseSelector").append(newCourse)
 });
@@ -55,6 +71,7 @@ $("#submitClasses").click(function() {
 		//$("#results").append("<p>" + $(subjectListSelect).val() + " " + $(classListSelect).val() + "</p>")
 		courseArray[i] = [$(subjectListSelect).val(),$(classListSelect).val()]
 	}
+	//$('#requiredCheckBox0').prop('checked')
 
 	console.log(courseArray)
 	
