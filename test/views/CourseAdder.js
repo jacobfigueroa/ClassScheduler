@@ -17,8 +17,11 @@ $("#courseSelector").on("change","select", function(){
 				$(courseList).empty();
 				var classes = $.parseJSON(data);
 
-				var classList = $("<select>") //Instatiate a select
+				//Instatiate a select,
+				var classList = $("<select>") 
 				classList.attr("id","classListSelect"+idNumber)
+
+				//Fill the options with all classes associated with the subject selected
 				for(var i = 0; i < classes.length; i++)
 				{
 					var newOption = $("<option>")
@@ -26,17 +29,24 @@ $("#courseSelector").on("change","select", function(){
 					classList.append(newOption)
 				}
 
+				$(courseList).append(classList);
+				$(courseList).append("<br>");
+
+
+				//Create a checkbox so that a user may designate if a course is required 
 				var requiredCheckBox = $("<input>")
 				requiredCheckBox.attr("type","checkbox")
 				requiredCheckBox.attr("id","requiredCheckBox"+courseCount)
+				$(courseList).append("Required?  ");
+				$(courseList).append(requiredCheckBox);
 
+				$(courseList).append("<br>");
+
+				//Create a checkbox so that a user may designate if they want an online course
 				var onlineCheckBox = $("<input>")
 				onlineCheckBox.attr("type","checkbox")
 				onlineCheckBox.attr("id","onlineCheckBox"+courseCount)
-
-
-				$(courseList).append(classList);
-				$(courseList).append(requiredCheckBox);
+				$(courseList).append("Online?  ");
 				$(courseList).append(onlineCheckBox);
 			});
 	}
@@ -44,34 +54,39 @@ $("#courseSelector").on("change","select", function(){
 
 $("#addClass").click(function() {
 	courseCount += 1
-	var newCourse = $("#course0").clone()
 
-	//update attributes and child attributes
-	newCourse.attr("id","course"+courseCount)
-	newCourse.children("#courseList0").attr("id","courseList"+courseCount)
+	if (courseCount <= 6) {
 
-	newCourse.children("#subjectListSelect0").attr("id","subjectListSelect"+courseCount)
-	newCourse.children("#classListSelect0").attr("id","classListSelect"+courseCount)
+		var newCourse = $("#course0").clone()
 
-	//Update checkboxes
-	//newCourse.children("#requiredCheckBox0").attr("id","requiredCheckBox"+courseCount)
-	//newCourse.children("#onlineCheckBox0").attr("id","onlineCheckBox"+courseCount)
+		//update attributes and child attributes
+		newCourse.attr("id","course"+courseCount)
+		newCourse.children("#courseList0").attr("id","courseList"+courseCount).empty()
 
-	$("#courseSelector").append(newCourse)
+		newCourse.children("#subjectListSelect0").attr("id","subjectListSelect"+courseCount)
+		newCourse.children("#classListSelect0").attr("id","classListSelect"+courseCount)
+
+		$("#courseSelector").append(newCourse)
+	
+	} else {
+		//Error message saying too many coursess
+	}
 });
 
 $("#submitClasses").click(function() {
 
 	$("#results").empty()
+
+	//Create array that will hold the courses that a user selected
 	var courseArray = []
-	for(var i = 0; i <= courseCount; i++)
-	{
+	for(var i = 0; i <= courseCount; i++) {
 		var subjectListSelect = "#subjectListSelect" + i
 		var classListSelect = "#classListSelect" + i
+		var requiredCheckBox = "#requiredCheckBox" + i
+		var onlineCheckBox = "#onlineCheckBox" + i
 		//$("#results").append("<p>" + $(subjectListSelect).val() + " " + $(classListSelect).val() + "</p>")
-		courseArray[i] = [$(subjectListSelect).val(),$(classListSelect).val()]
+		courseArray[i] = [ $(subjectListSelect).val(), $(classListSelect).val(), $(requiredCheckBox).prop('checked'), $(onlineCheckBox).prop('checked')]
 	}
-	//$('#requiredCheckBox0').prop('checked')
 
 	console.log(courseArray)
 	
@@ -86,11 +101,16 @@ $("#submitClasses").click(function() {
 				serverMessage.html("After the AJAX call the server returned this:")
 				$("#results").append(serverMessage)
 
-				var schedule = $.parseJSON(result);
+				//uncomment the following once the php script is working
+				//var schedule = $.parseJSON(result);
+				//$("#results").append(schedule)
+
+				//delete this once the php script is working
 				$("#results").append(result)
+
+
 				/*
-				for(var i = 0; i < schedule.length; i++)
-				{
+				for(var i = 0; i < schedule.length; i++) {
 					$("#results").append("<p>" + schedule[i][0] + " " + schedule[i][1] + "</p>")
 				}*/
 			});
