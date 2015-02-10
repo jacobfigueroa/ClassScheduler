@@ -1,4 +1,5 @@
 var courseCount = 0
+$("#results").parent().hide()
 
 $("#courseSelector").on("change","select", function(){
 	if( $(this).attr("class") == "subjectListSelect" ) {
@@ -74,7 +75,7 @@ $("#addClass").click(function() {
 });
 
 $("#submitClasses").click(function() {
-
+	$("#results").parent().show()
 	$("#results").empty()
 
 	//Create array that will hold the courses that a user selected
