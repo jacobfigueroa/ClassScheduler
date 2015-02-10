@@ -12,7 +12,7 @@ $("#courseSelector").on("change","select", function(){
 		$.ajax( { 
 			'type' : 'POST',
 			'url' : 'handlers/getCourses.php',
-			'data' : { 'subject' : subject} }
+			'data' : { 'subject' : subject } }
 			).done( function( data ) {
 				var courseList = "#courseList" + idNumber
 				$(courseList).empty();
@@ -78,6 +78,14 @@ $("#submitClasses").click(function() {
 	$("#results").parent().show()
 	$("#results").empty()
 
+	var startTime = $("#startTime").val()
+	var endTime = $("#endTime").val()
+
+	var daysOff = { "Monday" : $("#mondayCheckBox").prop("checked"), "Tuesday" : $("#tuesdayCheckBox").prop("checked"), 
+				"Wednesday" : $("#wednesdayCheckBox").prop("checked"), "Thursday" : $("#thursdayCheckBox").prop("checked"),
+				"Friday" : $("#fridayCheckBox").prop("checked") }
+
+
 	//Create array that will hold the courses that a user selected
 	var courseArray = []
 	for(var i = 0; i <= courseCount; i++) {
@@ -86,7 +94,8 @@ $("#submitClasses").click(function() {
 		var requiredCheckBox = "#requiredCheckBox" + i
 		var onlineCheckBox = "#onlineCheckBox" + i
 		//$("#results").append("<p>" + $(subjectListSelect).val() + " " + $(classListSelect).val() + "</p>")
-		courseArray[i] = [ $(subjectListSelect).val(), $(classListSelect).val(), $(requiredCheckBox).prop('checked'), $(onlineCheckBox).prop('checked')]
+		courseArray[i] = [ $(subjectListSelect).val(), $(classListSelect).val(), 
+				$(requiredCheckBox).prop('checked'), $(onlineCheckBox).prop('checked')]
 	}
 
 	console.log(courseArray)
@@ -95,11 +104,11 @@ $("#submitClasses").click(function() {
 	$.ajax( { 
 			'type' : 'POST',
 			'url' : 'handlers/getSchedule.php',
-			'data' : { 'courses' : courseArray} }
+			'data' : { 'courses' : courseArray, 'startTime' : startTime, 'endTime' : endTime, 'daysOff' : daysOff} }
 			).done( function(result) {
 				//return result
 				var serverMessage = $("<p>")
-				serverMessage.html("After the AJAX call the server returned this:")
+				serverMessage.html("The server responded with this:")
 				$("#results").append(serverMessage)
 
 				//uncomment the following once the php script is working
