@@ -14,6 +14,7 @@
 
   	<h1><center>Perfect Class Scheduler</center></h1>
 	
+	<div class = "well">
 	<div id = "courseSelector">
 
 		<div id = "course0">
@@ -31,9 +32,39 @@
 	</div>
 	<button type ="button" id ="addClass">Add a class</button>
 	<button type ="button" id ="submitClasses">Submit</button>
+	</div>
 
 	<br>
+
 	<div id = "results"></div>
+
+	<br>
+
+	<div class="well">
+		<div id = "preferences">
+			<div class="input-group">
+				<input type="text" id = "startTime" placeholder="Preferred start time">
+			</div>
+
+			<br>
+
+			<div class="input-group">
+				<input type="text" id = "endTime" placeholder="Preferred end time">
+			</div>
+
+			<br>
+
+			What days would you like off?
+
+			<br>
+
+			Monday: <input type = "checkbox" id = "mondayCheckBox">
+			Tuesday: <input type = "checkbox" id = "tuesdayCheckBox">
+			Wednesday: <input type = "checkbox" id = "wednesdayCheckBox">
+			Thursday: <input type = "checkbox" id = "thursdayCheckBox">
+			Friday: <input type = "checkbox" id = "FridayCheckBox">
+		</div>
+	</div>
 
 
   	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
