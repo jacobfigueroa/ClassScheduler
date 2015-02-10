@@ -115,7 +115,8 @@ class course
 		return $result;
 	}
 	
-	/* static function chooseASection($schedule)
+	/*
+	static function chooseASection($schedule)
 	{
 		$flag = false;
 		$temp = new course();
@@ -130,7 +131,7 @@ class course
 		}
 		echo $result;
 		return $result;
-	} */
+	}*/
 
 
 
