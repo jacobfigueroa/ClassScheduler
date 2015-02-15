@@ -10,7 +10,8 @@ $daysOff = $_POST['daysOff'];
 //Do php stuff.
 //What the code might look like?
 $schedule = course::generateSchedule($courses,$dbh);
-$sections = course::chooseASection($schedule);
+//$sections = course::chooseASection($schedule);
+$sections = course::returnOnlineClasses($schedule);
 
 //For now:
 //echo json_encode($courses);

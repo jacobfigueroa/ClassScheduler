@@ -141,6 +141,23 @@ class course
 		echo $result;
 		return $result;
 	}
+	
+	static function returnOnlineClasses($schedule)
+	{
+		$course = new course();
+		//$findme = '90L';
+		foreach($schedule as $s)
+		{
+			//$pos = strpos($s->Section, $findme);
+			if (strpos($s->Section, 'L') !== FALSE)
+			{
+				$course = $s;
+				$result[] = $course;
+			}
+		}
+		
+		return $result;
+	}
 
 
 
