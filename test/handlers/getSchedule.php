@@ -15,6 +15,6 @@ $sections = course::chooseASection($schedule);
 //For now:
 //echo json_encode($courses);
 //Later change it to:
-echo json_encode($schedule);
+echo json_encode($sections);
 //echo json_encode($daysOff);
 ?>

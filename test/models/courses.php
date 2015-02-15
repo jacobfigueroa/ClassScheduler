@@ -115,23 +115,32 @@ class course
 		return $result;
 	}
 	
-	/*
+	
 	static function chooseASection($schedule)
 	{
-		$flag = false;
-		$temp = new course();
+		$course = new course();
+		$counter = 1;
 		foreach($schedule as $s)
 		{
-			if($temp->Title != $s->Title)
+			if(counter == 1)
 			{
-				$temp->copyFromRow($s);
-				$result[] = $temp;
+				$course = $s;
+				$result[] = $course;
 			}
+			else
+			{
+				if($course->Title != $s->Title)
+				{
+					$course = $s;
+					$result[] = $course;
+				}
+			}
+			$counter = $counter + 1;
 			
 		}
 		echo $result;
 		return $result;
-	}*/
+	}
 
 
 
