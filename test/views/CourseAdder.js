@@ -143,6 +143,8 @@ $("#submitClasses").click(function() {
 					resultsTable.append(tableRow)
 				}
 
+				createCalendar(schedule);
+
 				$("#results").append(resultsTable)
 
 
@@ -195,4 +197,10 @@ function parseTime (time) {
 
 	var returnThis = hour + minute
 	return parseInt(returnThis)
+}
+
+function createCalendar (schedule) {
+	for (var i = 0; i < schedule.length; i++) {
+		var days = schedule[i]["Days"].split(" ")
+	}
 }
