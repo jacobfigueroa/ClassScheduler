@@ -20,7 +20,7 @@ $("#courseSelector").on("change","select", function(){
 
 				//Instatiate a select,
 				var classList = $("<select>") 
-				classList.attr("id","classListSelect"+idNumber)
+				classList.attr("id","classListSelect" + idNumber)
 
 				//Fill the options with all classes associated with the subject selected
 				for (var i = 0; i < classes.length; i++)
@@ -80,6 +80,9 @@ $("#submitClasses").click(function() {
 
 	var startTime = $("#startTime").val()
 	var endTime = $("#endTime").val()
+
+	startTime = parseTime(startTime)
+	endTime = parseTime(endTime)
 
 	var daysOff = { "Monday" : $("#mondayCheckBox").prop("checked"), "Tuesday" : $("#tuesdayCheckBox").prop("checked"), 
 				"Wednesday" : $("#wednesdayCheckBox").prop("checked"), "Thursday" : $("#thursdayCheckBox").prop("checked"),
@@ -155,3 +158,41 @@ $("#submitClasses").click(function() {
 				}*/
 			});
 });
+
+function parseTime (time) {
+	var locationOfColon = 0
+	for (var i = 0; i < time.length; i++) {
+		if (time[i] == ":")
+			locationOfColon = i
+	}
+
+	var hour, minute, meridiem;
+
+	if (locationOfColon == 1) {
+		//then they typed in something like 9:54 AM
+		hour = time[0]
+		minute = time[2] + time[3]
+		meridiem = time [5] + time[6]
+	} else {
+		//then they typed in something like 10:55 AM
+		hour = time [0] + time[1]
+		minute = time[3] + time[4]
+		meridiem = time [6] + time[7]
+	}
+
+	hour = parseInt(hour)
+
+	if (meridiem == "PM") {
+		if(hour != 12 ) {
+			hour += 12
+		}
+	}
+	if (meridiem == "AM") {
+		if(hour == 12) {
+			hour = 0
+		}
+	}
+
+	var returnThis = hour + minute
+	return parseInt(returnThis)
+}
