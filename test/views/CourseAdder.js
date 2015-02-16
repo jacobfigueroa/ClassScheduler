@@ -23,7 +23,7 @@ $("#courseSelector").on("change","select", function(){
 				classList.attr("id","classListSelect"+idNumber)
 
 				//Fill the options with all classes associated with the subject selected
-				for(var i = 0; i < classes.length; i++)
+				for (var i = 0; i < classes.length; i++)
 				{
 					var newOption = $("<option>")
 					newOption.attr("value", classes[i].CourseNumber).text(classes[i].CourseNumber + " " + classes[i].Title)
@@ -88,7 +88,7 @@ $("#submitClasses").click(function() {
 
 	//Create array that will hold the courses that a user selected
 	var courseArray = []
-	for(var i = 0; i <= courseCount; i++) {
+	for (var i = 0; i <= courseCount; i++) {
 		var subjectListSelect = "#subjectListSelect" + i
 		var classListSelect = "#classListSelect" + i
 		var requiredCheckBox = "#requiredCheckBox" + i
@@ -112,12 +112,38 @@ $("#submitClasses").click(function() {
 				$("#results").append(serverMessage)
 
 				//uncomment the following once the php script is working
-				//var schedule = $.parseJSON(result);
-				//$("#results").append(schedule)
+				var schedule = $.parseJSON(result);
 
+
+				var resultsTable = $("<table>").attr("class","table table-striped").attr("border",0)
+
+				var keyRow = $("<tr>").attr("class","text-left")
+				for (var key in schedule[0]) { 
+  					var tableData = $("<td>")
+  					tableData.html(key)
+  					keyRow.append(tableData)
+				}
+				resultsTable.append(keyRow)
+
+				for (var i = 0; i < schedule.length; i++) {
+					var tableRow = $("<tr>").attr("class","text-left")
+					for (var key in schedule[i]) { 
+						var value = schedule[i][key];
+      					var tableData = $("<td>")
+      					tableData.html(value)
+      					tableRow.append(tableData)
+					}
+					resultsTable.append(tableRow)
+				}
+
+				$("#results").append(resultsTable)
+
+
+				/*
+				$("#results").append("unparsedJSON:")
 				//delete this once the php script is working
 				$("#results").append(result)
-
+				*/
 
 				/*
 				for(var i = 0; i < schedule.length; i++) {
