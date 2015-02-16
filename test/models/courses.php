@@ -27,7 +27,7 @@ class course
 		$this->Section = $row['Section'];
 		$this->Title = $row['Title'];
 		$this->CRN = $row['CRN'];
-		$this->scheduletype = $row['ScheduleType'];
+		$this->ScheduleType = $row['ScheduleType'];
 		$this->Instructor = $row['Instructor'];
 		$this->Days = $row['Days'];
 		$this->Start = $row['Start'];
