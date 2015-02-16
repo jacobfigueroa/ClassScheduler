@@ -1,0 +1,21 @@
+body {
+	background-color:#00AACC;
+}
+
+.table-striped > tbody > tr:nth-child(odd) > td,
+.table-striped > tbody > tr:nth-child(odd) > th {
+  background-color: #00BBE0;
+}
+
+.table thead > tr > th, .table tbody > tr > th,
+.table tfoot > tr > th, .table thead > tr > td,
+.table tbody > tr > td, .table tfoot > tr > td {
+	padding: 8px;
+	line-height: 1.428571429;
+	vertical-align: top;
+	border-top: 0px solid #dddddd;
+}
+
+.well {
+	background-color:#00BBE0;
+}
