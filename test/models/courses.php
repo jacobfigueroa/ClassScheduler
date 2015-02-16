@@ -145,10 +145,8 @@ class course
 	static function returnOnlineClasses($schedule)
 	{
 		$course = new course();
-		//$findme = '90L';
 		foreach($schedule as $s)
 		{
-			//$pos = strpos($s->Section, $findme);
 			if (strpos($s->Section, 'L') !== FALSE)
 			{
 				$course = $s;
@@ -158,6 +156,21 @@ class course
 		
 		return $result;
 	}
+	
+	static function removeFridayCourses($schedule)
+	{
+		$course = new course();
+		foreach($schedule as $s)
+		{
+			if (strpos($s->Days, 'F') === FALSE)
+			{
+				$course = $s;
+				$result[] = $course;
+			}
+		}
+		return $result;
+	}
+	
 
 
 
