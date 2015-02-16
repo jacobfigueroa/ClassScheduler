@@ -107,8 +107,12 @@ $("#submitClasses").click(function() {
 			'data' : { 'courses' : courseArray, 'startTime' : startTime, 'endTime' : endTime, 'daysOff' : daysOff} }
 			).done( function(result) {
 				//return result
-				var serverMessage = $("<p>")
-				serverMessage.html("The server responded with this:")
+				var serverMessage = $("<h3>")
+				var center = $("<center>")
+				center.html("Your perfect schedule:")
+				serverMessage.html(center)
+
+				//serverMessage.html("The server responded with this:")
 				$("#results").append(serverMessage)
 
 				//uncomment the following once the php script is working
