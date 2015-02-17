@@ -81,9 +81,11 @@ $("#submitClasses").click(function() {
 	var startTime = $("#startTime").val()
 	var endTime = $("#endTime").val()
 
+	// Convert times to military times since thats what the DB uses
 	startTime = convertTimeToMilitaryTime(startTime)
 	endTime = convertTimeToMilitaryTime(endTime)
 
+	//Create array that stores what days off the users wants
 	var daysOff = { "Monday" : $("#mondayCheckBox").prop("checked"), "Tuesday" : $("#tuesdayCheckBox").prop("checked"), 
 				"Wednesday" : $("#wednesdayCheckBox").prop("checked"), "Thursday" : $("#thursdayCheckBox").prop("checked"),
 				"Friday" : $("#fridayCheckBox").prop("checked") }
@@ -122,8 +124,10 @@ $("#submitClasses").click(function() {
 				var schedule = $.parseJSON(result);
 
 
+				// Create a table to display the classes that are returned
 				var resultsTable = $("<table>").attr("class","table table-striped").attr("border",0)
 
+				// Create a table row that displays the keys.
 				var keyRow = $("<tr>").attr("class","text-left")
 				for (var key in schedule[0]) { 
   					var tableData = $("<td>")
@@ -132,21 +136,31 @@ $("#submitClasses").click(function() {
 				}
 				resultsTable.append(keyRow)
 
+				// Create a table row that displays the values
 				for (var i = 0; i < schedule.length; i++) {
 					var tableRow = $("<tr>").attr("class","text-left")
-					for (var key in schedule[i]) { 
+
+					// iterate through all keys
+					for (var key in schedule[i]) {
+						// get associated value
 						var value = schedule[i][key];
       					var tableData = $("<td>")
+
+      					// Change military time from DB to normal time
       					if (key == "Start" || key == "End") {
       						value = convertMilitaryTimeToTime(value)
       					}
+
+
       					tableData.html(value)
       					tableRow.append(tableData)
 					}
 					resultsTable.append(tableRow)
 				}
 
-				createCalendar(schedule);
+				// Create calendar
+				//var calendar = createCalendar(schedule)
+				//$("#results").append(calendar)
 
 				$("#results").append(resultsTable)
 
@@ -156,11 +170,6 @@ $("#submitClasses").click(function() {
 				//delete this once the php script is working
 				$("#results").append(result)
 				*/
-
-				/*
-				for(var i = 0; i < schedule.length; i++) {
-					$("#results").append("<p>" + schedule[i][0] + " " + schedule[i][1] + "</p>")
-				}*/
 			});
 });
 
@@ -186,6 +195,7 @@ function convertTimeToMilitaryTime (time) {
 		minute = time[3] + time[4]
 		meridiem = time [6] + time[7]
 	} else {
+		// Not proper format
 		return "Not proper format"
 	}
 
@@ -214,13 +224,17 @@ function convertMilitaryTimeToTime (militaryTime) {
 	var hour, minute, meridiem;
 
 	if ( militaryTime.length == 4 ) {
+		//Example: 1145      hour = 11  minute = 45
 		var hour = militaryTime[0] + militaryTime[1]
 		var minute = militaryTime[2] + militaryTime[3]
 	} else if (militaryTime.length == 3) {
+		//Example: 935      hour = 9  minute = 35
 		var hour = militaryTime[0]
 		var minute = militaryTime[1] + militaryTime[2]
 	} else {
-		return "Not proper format"
+		// Not proper format.
+		//militaryTime comes from the database so most likely the class doesnt have a time
+		return ""
 	}
 
 	if ( parseInt(hour) < 12 ) {
@@ -235,7 +249,13 @@ function convertMilitaryTimeToTime (militaryTime) {
 	return hour + ":" + minute + " " + meridiem
 }
 
+//Creates a calendary. at the moment the function is not used
 function createCalendar (schedule) {
+
+	//Split the days that a course is offered.
+	//Will have to make a seperate entry in calendar for each day of class.
+	//For example a MWF class will need an entry on Monday, Wednesday and Friday.
+	//So the below code will take care of that.
 	for (var i = 0; i < schedule.length; i++) {
 		var days = schedule[i]["Days"].split(" ")
 	}
