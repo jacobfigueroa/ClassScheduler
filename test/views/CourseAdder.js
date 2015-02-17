@@ -81,8 +81,8 @@ $("#submitClasses").click(function() {
 	var startTime = $("#startTime").val()
 	var endTime = $("#endTime").val()
 
-	startTime = parseTime(startTime)
-	endTime = parseTime(endTime)
+	startTime = convertTimeToMilitaryTime(startTime)
+	endTime = convertTimeToMilitaryTime(endTime)
 
 	var daysOff = { "Monday" : $("#mondayCheckBox").prop("checked"), "Tuesday" : $("#tuesdayCheckBox").prop("checked"), 
 				"Wednesday" : $("#wednesdayCheckBox").prop("checked"), "Thursday" : $("#thursdayCheckBox").prop("checked"),
@@ -137,6 +137,9 @@ $("#submitClasses").click(function() {
 					for (var key in schedule[i]) { 
 						var value = schedule[i][key];
       					var tableData = $("<td>")
+      					if (key == "Start" || key == "End") {
+      						value = convertMilitaryTimeToTime(value)
+      					}
       					tableData.html(value)
       					tableRow.append(tableData)
 					}
@@ -161,7 +164,9 @@ $("#submitClasses").click(function() {
 			});
 });
 
-function parseTime (time) {
+
+// Example: 11:54 AM to 1154. 2:35 PM to 1435.
+function convertTimeToMilitaryTime (time) {
 	var locationOfColon = 0
 	for (var i = 0; i < time.length; i++) {
 		if (time[i] == ":")
@@ -175,11 +180,13 @@ function parseTime (time) {
 		hour = time[0]
 		minute = time[2] + time[3]
 		meridiem = time [5] + time[6]
-	} else {
+	} else if (locationOfColon == 2) {
 		//then they typed in something like 10:55 AM
 		hour = time [0] + time[1]
 		minute = time[3] + time[4]
 		meridiem = time [6] + time[7]
+	} else {
+		return "Not proper format"
 	}
 
 	hour = parseInt(hour)
@@ -197,6 +204,35 @@ function parseTime (time) {
 
 	var returnThis = hour + minute
 	return parseInt(returnThis)
+}
+
+// Example: 1154 to 11:54 AM. 1435 to 2:35 PM.
+function convertMilitaryTimeToTime (militaryTime) {
+	//Convert to string first
+	militaryTime += ""
+
+	var hour, minute, meridiem;
+
+	if ( militaryTime.length == 4 ) {
+		var hour = militaryTime[0] + militaryTime[1]
+		var minute = militaryTime[2] + militaryTime[3]
+	} else if (militaryTime.length == 3) {
+		var hour = militaryTime[0]
+		var minute = militaryTime[1] + militaryTime[2]
+	} else {
+		return "Not proper format"
+	}
+
+	if ( parseInt(hour) < 12 ) {
+		meridiem = "AM"
+	} else {
+		meridiem = "PM"
+		if ( parseInt(hour) > 12 ) {
+			hour = (parseInt(hour) - 12) + ""
+		}
+	}
+
+	return hour + ":" + minute + " " + meridiem
 }
 
 function createCalendar (schedule) {
