@@ -1,25 +1,29 @@
 var courseCount = 0
+$("#results").parent().hide()
 
 $("#courseSelector").on("change","select", function(){
 	if( $(this).attr("class") == "subjectListSelect" ) {
 		var subject = $(this).val()
 		var id = $(this).attr("id")
 		var idNumber = id.substr(id.length-1,id.length-1) //start,end. Returns last character
-		console.log(idNumber)
+		//console.log(idNumber)
 
 		//Send subject selected, return list of courses associated with that subject
 		$.ajax( { 
 			'type' : 'POST',
 			'url' : 'handlers/getCourses.php',
-			'data' : { 'subject' : subject} }
+			'data' : { 'subject' : subject } }
 			).done( function( data ) {
 				var courseList = "#courseList" + idNumber
 				$(courseList).empty();
 				var classes = $.parseJSON(data);
 
-				var classList = $("<select>") //Instatiate a select
-				classList.attr("id","classListSelect"+idNumber)
-				for(var i = 0; i < classes.length; i++)
+				//Instatiate a select,
+				var classList = $("<select>") 
+				classList.attr("id","classListSelect" + idNumber)
+
+				//Fill the options with all classes associated with the subject selected
+				for (var i = 0; i < classes.length; i++)
 				{
 					var newOption = $("<option>")
 					newOption.attr("value", classes[i].CourseNumber).text(classes[i].CourseNumber + " " + classes[i].Title)
@@ -27,33 +31,76 @@ $("#courseSelector").on("change","select", function(){
 				}
 
 				$(courseList).append(classList);
+				$(courseList).append("<br>");
+
+
+				//Create a checkbox so that a user may designate if a course is required 
+				var requiredCheckBox = $("<input>")
+				requiredCheckBox.attr("type","checkbox")
+				requiredCheckBox.attr("id","requiredCheckBox"+courseCount)
+				$(courseList).append("Required?  ");
+				$(courseList).append(requiredCheckBox);
+
+				$(courseList).append("<br>");
+
+				//Create a checkbox so that a user may designate if they want an online course
+				var onlineCheckBox = $("<input>")
+				onlineCheckBox.attr("type","checkbox")
+				onlineCheckBox.attr("id","onlineCheckBox"+courseCount)
+				$(courseList).append("Online?  ");
+				$(courseList).append(onlineCheckBox);
 			});
 	}
 });
 
 $("#addClass").click(function() {
 	courseCount += 1
-	var newCourse = $("#course0").clone()
 
-	//update attributes and child attributes
-	newCourse.attr("id","course"+courseCount)
-	newCourse.children("#courseList0").attr("id","courseList"+courseCount)
-	newCourse.children("#classListSelect0").attr("id","classListSelect"+courseCount)
-	newCourse.children("#subjectListSelect0").attr("id","subjectListSelect"+courseCount)
+	if (courseCount <= 6) {
 
-	$("#courseSelector").append(newCourse)
+		var newCourse = $("#course0").clone()
+
+		//update attributes and child attributes
+		newCourse.attr("id","course"+courseCount)
+		newCourse.children("#courseList0").attr("id","courseList"+courseCount).empty()
+
+		newCourse.children("#subjectListSelect0").attr("id","subjectListSelect"+courseCount)
+		newCourse.children("#classListSelect0").attr("id","classListSelect"+courseCount)
+
+		$("#courseSelector").append(newCourse)
+	
+	} else {
+		//Error message saying too many coursess
+	}
 });
 
 $("#submitClasses").click(function() {
-
+	$("#results").parent().show()
 	$("#results").empty()
+
+	var startTime = $("#startTime").val()
+	var endTime = $("#endTime").val()
+
+	// Convert times to military times since thats what the DB uses
+	startTime = convertTimeToMilitaryTime(startTime)
+	endTime = convertTimeToMilitaryTime(endTime)
+
+	//Create array that stores what days off the users wants
+	var daysOff = { "Monday" : $("#mondayCheckBox").prop("checked"), "Tuesday" : $("#tuesdayCheckBox").prop("checked"), 
+				"Wednesday" : $("#wednesdayCheckBox").prop("checked"), "Thursday" : $("#thursdayCheckBox").prop("checked"),
+				"Friday" : $("#fridayCheckBox").prop("checked") }
+
+
+	//Create array that will hold the courses that a user selected
 	var courseArray = []
-	for(var i = 0; i <= courseCount; i++)
-	{
+	for (var i = 0; i <= courseCount; i++) {
 		var subjectListSelect = "#subjectListSelect" + i
 		var classListSelect = "#classListSelect" + i
+		var requiredCheckBox = "#requiredCheckBox" + i
+		var onlineCheckBox = "#onlineCheckBox" + i
 		//$("#results").append("<p>" + $(subjectListSelect).val() + " " + $(classListSelect).val() + "</p>")
-		courseArray[i] = [$(subjectListSelect).val(),$(classListSelect).val()]
+		courseArray[i] = [ $(subjectListSelect).val(), $(classListSelect).val(), 
+				$(requiredCheckBox).prop('checked'), $(onlineCheckBox).prop('checked')]
 	}
 
 	console.log(courseArray)
@@ -62,19 +109,154 @@ $("#submitClasses").click(function() {
 	$.ajax( { 
 			'type' : 'POST',
 			'url' : 'handlers/getSchedule.php',
-			'data' : { 'courses' : courseArray} }
+			'data' : { 'courses' : courseArray, 'startTime' : startTime, 'endTime' : endTime, 'daysOff' : daysOff} }
 			).done( function(result) {
 				//return result
-				var serverMessage = $("<p>")
-				serverMessage.html("After the AJAX call the server returned this:")
+				var serverMessage = $("<h3>")
+				var center = $("<center>")
+				center.html("Your perfect schedule:")
+				serverMessage.html(center)
+
+				//serverMessage.html("The server responded with this:")
 				$("#results").append(serverMessage)
 
+				//uncomment the following once the php script is working
 				var schedule = $.parseJSON(result);
-				$("#results").append(schedule)
+
+
+				// Create a table to display the classes that are returned
+				var resultsTable = $("<table>").attr("class","table table-striped").attr("border",0)
+
+				// Create a table row that displays the keys.
+				var keyRow = $("<tr>").attr("class","text-left")
+				for (var key in schedule[0]) { 
+  					var tableData = $("<td>")
+  					tableData.html(key)
+  					keyRow.append(tableData)
+				}
+				resultsTable.append(keyRow)
+
+				// Create a table row that displays the values
+				for (var i = 0; i < schedule.length; i++) {
+					var tableRow = $("<tr>").attr("class","text-left")
+
+					// iterate through all keys
+					for (var key in schedule[i]) {
+						// get associated value
+						var value = schedule[i][key];
+      					var tableData = $("<td>")
+
+      					// Change military time from DB to normal time
+      					if (key == "Start" || key == "End") {
+      						value = convertMilitaryTimeToTime(value)
+      					}
+
+
+      					tableData.html(value)
+      					tableRow.append(tableData)
+					}
+					resultsTable.append(tableRow)
+				}
+
+				// Create calendar
+				//var calendar = createCalendar(schedule)
+				//$("#results").append(calendar)
+
+				$("#results").append(resultsTable)
+
+
 				/*
-				for(var i = 0; i < schedule.length; i++)
-				{
-					$("#results").append("<p>" + schedule[i][0] + " " + schedule[i][1] + "</p>")
-				}*/
+				$("#results").append("unparsedJSON:")
+				//delete this once the php script is working
+				$("#results").append(result)
+				*/
 			});
 });
+
+
+// Example: 11:54 AM to 1154. 2:35 PM to 1435.
+function convertTimeToMilitaryTime (time) {
+	var locationOfColon = 0
+	for (var i = 0; i < time.length; i++) {
+		if (time[i] == ":")
+			locationOfColon = i
+	}
+
+	var hour, minute, meridiem;
+
+	if (locationOfColon == 1) {
+		//then they typed in something like 9:54 AM
+		hour = time[0]
+		minute = time[2] + time[3]
+		meridiem = time [5] + time[6]
+	} else if (locationOfColon == 2) {
+		//then they typed in something like 10:55 AM
+		hour = time [0] + time[1]
+		minute = time[3] + time[4]
+		meridiem = time [6] + time[7]
+	} else {
+		// Not proper format
+		return "Not proper format"
+	}
+
+	hour = parseInt(hour)
+
+	if (meridiem == "PM") {
+		if(hour != 12 ) {
+			hour += 12
+		}
+	}
+	if (meridiem == "AM") {
+		if(hour == 12) {
+			hour = 0
+		}
+	}
+
+	var returnThis = hour + minute
+	return parseInt(returnThis)
+}
+
+// Example: 1154 to 11:54 AM. 1435 to 2:35 PM.
+function convertMilitaryTimeToTime (militaryTime) {
+	//Convert to string first
+	militaryTime += ""
+
+	var hour, minute, meridiem;
+
+	if ( militaryTime.length == 4 ) {
+		//Example: 1145      hour = 11  minute = 45
+		var hour = militaryTime[0] + militaryTime[1]
+		var minute = militaryTime[2] + militaryTime[3]
+	} else if (militaryTime.length == 3) {
+		//Example: 935      hour = 9  minute = 35
+		var hour = militaryTime[0]
+		var minute = militaryTime[1] + militaryTime[2]
+	} else {
+		// Not proper format.
+		//militaryTime comes from the database so most likely the class doesnt have a time
+		return ""
+	}
+
+	if ( parseInt(hour) < 12 ) {
+		meridiem = "AM"
+	} else {
+		meridiem = "PM"
+		if ( parseInt(hour) > 12 ) {
+			hour = (parseInt(hour) - 12) + ""
+		}
+	}
+
+	return hour + ":" + minute + " " + meridiem
+}
+
+//Creates a calendary. at the moment the function is not used
+function createCalendar (schedule) {
+
+	//Split the days that a course is offered.
+	//Will have to make a seperate entry in calendar for each day of class.
+	//For example a MWF class will need an entry on Monday, Wednesday and Friday.
+	//So the below code will take care of that.
+	for (var i = 0; i < schedule.length; i++) {
+		var days = schedule[i]["Days"].split(" ")
+	}
+}

@@ -27,7 +27,7 @@ class course
 		$this->Section = $row['Section'];
 		$this->Title = $row['Title'];
 		$this->CRN = $row['CRN'];
-		$this->scheduletype = $row['ScheduleType'];
+		$this->ScheduleType = $row['ScheduleType'];
 		$this->Instructor = $row['Instructor'];
 		$this->Days = $row['Days'];
 		$this->Start = $row['Start'];
@@ -95,14 +95,15 @@ class course
 		return $result;
 	}
 	
-	/*
+	
 	static function generateSchedule($courses, $dbh)
 	{
+		//grabs all sections of the chosen classes
 		foreach ($courses as $c)
 		{
 			$stmt = $dbh->prepare( "SELECT * FROM ".course::$tableName." WHERE Subject = :Subject AND CourseNumber = :CourseNumber" );
-			$stmt->bindParam( ':Subject', $c->[0] );
-			$stmt->bindParam( ':Subject', $c->[1] );
+			$stmt->bindParam( ':Subject', $c[0] );
+			$stmt->bindParam( ':CourseNumber', $c[1] );
 			$stmt->execute();
 			
 			while( $row = $stmt->fetch() ) 
@@ -113,22 +114,70 @@ class course
 			}
 		}
 		return $result;
-		
-		
-	}*/
+	}
 	
-	/* static function getSubjects( $dbh ) {
-		$stmt = $dbh->prepare( "select distinct subject from TABLE1" );
-		$stmt->execute();
+	
+	static function chooseASection($schedule)
+	{
+		//chooses the first section in the list of all classes
+		$course = new course();
+		$counter = 1;
+		foreach($schedule as $s)
+		{
+			if(counter == 1)
+			{
+				$course = $s;
+				$result[] = $course;
+			}
+			else
+			{
+				if($course->Title != $s->Title)
+				{
+					$course = $s;
+					$result[] = $course;
+				}
+			}
+			$counter = $counter + 1;
+			
+		}
+		echo $result;
+		return $result;
+	}
+	
+	static function returnOnlineClasses($schedule)
+	{
+		//searches through all classes in schedule and removes all classes that arent online
+		$course = new course();
+		$searchPAram = 'L';
+		foreach($schedule as $s)
+		{
+			if (strpos($s->Section, $searchParam) !== FALSE)
+			{
+				$course = $s;
+				$result[] = $course;
+			}
+		}
 		
-		$result = array();
-		while( $row = $stmt->fetch() ) {
-			$course = new course();
-			$course->copyFromRow( $row );
-			$result[] = $course;
+		return $result;
+	}
+	
+	static function removeFridayCourses($schedule)
+	{
+		//searches through all classes in schedule to remove specific days, can be easily modded to remove any day
+		$course = new course();
+		$dayOff = 'F';
+		foreach($schedule as $s)
+		{
+			if (strpos($s->Days, $daysOff) === FALSE)
+			{
+				$course = $s;
+				$result[] = $course;
+			}
 		}
 		return $result;
-	} */
+	}
+	
+
 
 
 }
