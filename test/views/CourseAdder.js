@@ -259,23 +259,19 @@ function convertMilitaryTimeToTime (militaryTime) {
 //Creates a calendary. at the moment the function is not used
 function createCalendar (schedule) {
 
-		
-		$('#calendar').fullCalendar({
-			header: false,
-			defaultView: 'agendaWeek',
-			weekends: false,
-			defaultDate: '2015-02-09',
-			editable: false,
-			eventLimit: true, // allow "more" link when too many events
-			minTime: "07:00:00",
-		});
-	
-				// 	var newEvent = new Object();
+	$('#calendar').fullCalendar('removeEvents')
 
-				// newEvent.title = "some text";
-				// newEvent.start = new Date();
-				// newEvent.allDay = false;
-				// $('#calendar').fullCalendar( 'renderEvent', newEvent );
+		
+	$('#calendar').fullCalendar({
+		header: false,
+		defaultView: 'agendaWeek',
+		weekends: false,
+		defaultDate: '2015-02-09',
+		editable: false,
+		eventLimit: true, // allow "more" link when too many events
+		minTime: "07:00:00",
+	});
+	
 				
 	for (var i = 0; i < schedule.length; i++) {
 		var days = splitDays(schedule[i]);
