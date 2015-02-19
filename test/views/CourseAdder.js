@@ -161,9 +161,15 @@ $("#submitClasses").click(function() {
 
 				$("#results").append(resultsTable)
 
-				// Create calendar
+				//create calendar
 				var calendar = createCalendar(schedule)
 				$("#calendar").append(calendar)
+				var newEvent = new Object();
+
+				newEvent.title = "some text";
+				newEvent.start = new Date();
+				newEvent.allDay = false;
+				$('#calendar').fullCalendar( 'renderEvent', newEvent );
 
 
 				/*
@@ -253,23 +259,13 @@ function convertMilitaryTimeToTime (militaryTime) {
 //Creates a calendary. at the moment the function is not used
 function createCalendar (schedule) {
 
-	//Split the days that a course is offered.
-	//Will have to make a seperate entry in calendar for each day of class.
-	//For example a MWF class will need an entry on Monday, Wednesday and Friday.
-	//So the below code will take care of that.
-	for (var i = 0; i < schedule.length; i++) {
-		var days = schedule[i]["Days"].split(" ")
-	}
-
 		
 		$('#calendar').fullCalendar({
-			header: {
-				left: 'today',
-				center: 'title',
-				right: 'month,agendaWeek,agendaDay'
-			},
-			defaultDate: '2015-02-12',
-			editable: true,
+			header: false,
+			defaultView: 'agendaWeek',
+			weekends: false,
+			defaultDate: '2015-02-09',
+			editable: false,
 			eventLimit: true, // allow "more" link when too many events
 			events: [
 				{
@@ -319,7 +315,8 @@ function createCalendar (schedule) {
 				},
 				{
 					title: 'Birthday Party',
-					start: '2015-02-13T07:00:00'
+					start: '2015-02-13T07:00:00',
+					end: '2015-02-13T10:00:00'
 				},
 				{
 					title: 'Click for Google',
@@ -328,5 +325,47 @@ function createCalendar (schedule) {
 				}
 			]
 		});
+	
+				// 	var newEvent = new Object();
 
+				// newEvent.title = "some text";
+				// newEvent.start = new Date();
+				// newEvent.allDay = false;
+				// $('#calendar').fullCalendar( 'renderEvent', newEvent );
+				/*
+	for (var i = 0; i < schedule.length; i++) {
+		var days = splitDays(schedule[i]);
+
+		for (var j = 0; j < days.length; j++) {
+			var newEvent = new Object();
+			newEvent.title = schedule[i]["CourseName"]
+
+			//lazy way to do it
+			if (days[i] == "M") {
+				days[i] = "2015-02-09"
+			} else if (days[i] == "T") {
+				days[i] = "2015-02-10"
+			} else if (days[i] == "W") {
+				days[i] = "2015-02-11"
+			} else if (days[i] == "R") {
+				days[i] = "2015-02-12"
+			} else if (days[i] == "F") {
+				days[i] = "2015-02-13"
+			}
+
+			newEvent.start = 
+			days[i]
+		}
+	}*/
+}
+
+function splitDays(course)
+{
+	//Split the days that a course is offered.
+	//Will have to make a seperate entry in calendar for each day of class.
+	//For example a MWF class will need an entry on Monday, Wednesday and Friday.
+	//So the below code will take care of that.
+	for (var i = 0; i < schedule.length; i++) {
+		var days = schedule[i]["Days"].split(" ")
+	}
 }
