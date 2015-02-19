@@ -148,11 +148,11 @@ $("#submitClasses").click(function() {
 
       					// Change military time from DB to normal time
       					if (key == "Start" || key == "End") {
-      						value = convertMilitaryTimeToTime(value)
+      						tableData.html(convertMilitaryTimeToTime(value))
+      					} else {
+      						tableData.html(value)
       					}
-
-
-      					tableData.html(value)
+      					
       					tableRow.append(tableData)
 					}
 					resultsTable.append(tableRow)
@@ -267,63 +267,7 @@ function createCalendar (schedule) {
 			defaultDate: '2015-02-09',
 			editable: false,
 			eventLimit: true, // allow "more" link when too many events
-			events: [
-				{
-					title: 'All Day Event',
-					start: '2015-02-01'
-				},
-				{
-					title: 'Long Event',
-					start: '2015-02-07',
-					end: '2015-02-10'
-				},
-				{
-					id: 999,
-					title: 'Repeating Event',
-					start: '2015-02-09T16:00:00'
-				},
-				{
-					id: 999,
-					title: 'Repeating Event',
-					start: '2015-02-16T16:00:00'
-				},
-				{
-					title: 'Conference',
-					start: '2015-02-11',
-					end: '2015-02-13'
-				},
-				{
-					title: 'Meeting',
-					start: '2015-02-12T10:30:00',
-					end: '2015-02-12T12:30:00'
-				},
-				{
-					title: 'Lunch',
-					start: '2015-02-12T12:00:00'
-				},
-				{
-					title: 'Meeting',
-					start: '2015-02-12T14:30:00'
-				},
-				{
-					title: 'Happy Hour',
-					start: '2015-02-12T17:30:00'
-				},
-				{
-					title: 'Dinner',
-					start: '2015-02-12T20:00:00'
-				},
-				{
-					title: 'Birthday Party',
-					start: '2015-02-13T07:00:00',
-					end: '2015-02-13T10:00:00'
-				},
-				{
-					title: 'Click for Google',
-					url: 'http://google.com/',
-					start: '2015-02-28'
-				}
-			]
+			minTime: "07:00:00",
 		});
 	
 				// 	var newEvent = new Object();
@@ -332,31 +276,38 @@ function createCalendar (schedule) {
 				// newEvent.start = new Date();
 				// newEvent.allDay = false;
 				// $('#calendar').fullCalendar( 'renderEvent', newEvent );
-				/*
+				
 	for (var i = 0; i < schedule.length; i++) {
 		var days = splitDays(schedule[i]);
 
 		for (var j = 0; j < days.length; j++) {
+			console.log(days)
 			var newEvent = new Object();
 			newEvent.title = schedule[i]["CourseName"]
 
+			var day;
 			//lazy way to do it
-			if (days[i] == "M") {
-				days[i] = "2015-02-09"
-			} else if (days[i] == "T") {
-				days[i] = "2015-02-10"
-			} else if (days[i] == "W") {
-				days[i] = "2015-02-11"
-			} else if (days[i] == "R") {
-				days[i] = "2015-02-12"
-			} else if (days[i] == "F") {
-				days[i] = "2015-02-13"
+			if (days[j] == "M") {
+				day = "2015-02-09"
+			} else if (days[j] == "T") {
+				day = "2015-02-10"
+			} else if (days[j] == "W") {
+				day = "2015-02-11"
+			} else if (days[j] == "R") {
+				day = "2015-02-12"
+			} else if (days[j] == "F") {
+				day = "2015-02-13"
 			}
+			newEvent.start = day + "T" + convertMilitaryTimeToFullCalendarFormat(schedule[i]["Start"])
+			newEvent.end = day + "T" + convertMilitaryTimeToFullCalendarFormat(schedule[i]["End"])
+			newEvent.allDay = false;
 
-			newEvent.start = 
-			days[i]
+			console.log("title:" + schedule[i]["CourseName"] )
+			console.log("start:" + day + "T" + convertMilitaryTimeToFullCalendarFormat(schedule[i]["Start"]))
+			console.log("end:" + day + "T" + convertMilitaryTimeToFullCalendarFormat(schedule[i]["End"]))
+			$('#calendar').fullCalendar( 'renderEvent', newEvent );
 		}
-	}*/
+	}
 }
 
 function splitDays(course)
@@ -365,7 +316,24 @@ function splitDays(course)
 	//Will have to make a seperate entry in calendar for each day of class.
 	//For example a MWF class will need an entry on Monday, Wednesday and Friday.
 	//So the below code will take care of that.
-	for (var i = 0; i < schedule.length; i++) {
-		var days = schedule[i]["Days"].split(" ")
+	//for (var i = 0; i < schedule.length; i++) {
+		var days = course["Days"].split(" ")
+		return days
+	//}
+}
+
+function convertMilitaryTimeToFullCalendarFormat(militaryTime){
+	if ( militaryTime.length == 4 ) {
+		//Example: 1145      hour = 11  minute = 45
+		var hour = militaryTime[0] + militaryTime[1]
+		var minute = militaryTime[2] + militaryTime[3]
+	} else if (militaryTime.length == 3) {
+		//Example: 935      hour = 9  minute = 35
+		var hour = militaryTime[0]
+		var minute = militaryTime[1] + militaryTime[2]
+
+		hour = "0" + hour;
 	}
+
+	return hour + ":" + minute + ":" + "00"
 }
