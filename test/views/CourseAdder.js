@@ -270,6 +270,7 @@ function createCalendar (schedule) {
 		editable: false,
 		eventLimit: true, // allow "more" link when too many events
 		minTime: "07:00:00",
+		columnFormat: "ddd"
 	});
 	
 				
@@ -279,7 +280,7 @@ function createCalendar (schedule) {
 		for (var j = 0; j < days.length; j++) {
 			console.log(days)
 			var newEvent = new Object();
-			newEvent.title = schedule[i]["CourseName"]
+			newEvent.title = schedule[i]["CourseName"] + " " + schedule[i]["Title"]
 
 			var day;
 			//lazy way to do it
