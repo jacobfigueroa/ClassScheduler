@@ -164,13 +164,9 @@ $("#submitClasses").click(function() {
 				//create calendar
 				var calendar = createCalendar(schedule)
 				$("#calendar").append(calendar)
-				var newEvent = new Object();
 
-				newEvent.title = "some text";
-				newEvent.start = new Date();
-				newEvent.allDay = false;
-				$('#calendar').fullCalendar( 'renderEvent', newEvent );
-
+				//Automatically scroll to the results
+				//scrollTo("#results")
 
 				/*
 				$("#results").append("unparsedJSON:")
@@ -278,7 +274,6 @@ function createCalendar (schedule) {
 		var days = splitDays(schedule[i]);
 
 		for (var j = 0; j < days.length; j++) {
-			console.log(days)
 			var newEvent = new Object();
 			newEvent.title = schedule[i]["CourseName"] + " " + schedule[i]["Title"]
 
@@ -299,9 +294,6 @@ function createCalendar (schedule) {
 			newEvent.end = day + "T" + convertMilitaryTimeToFullCalendarFormat(schedule[i]["End"])
 			newEvent.allDay = false;
 
-			console.log("title:" + schedule[i]["CourseName"] )
-			console.log("start:" + day + "T" + convertMilitaryTimeToFullCalendarFormat(schedule[i]["Start"]))
-			console.log("end:" + day + "T" + convertMilitaryTimeToFullCalendarFormat(schedule[i]["End"]))
 			$('#calendar').fullCalendar( 'renderEvent', newEvent );
 		}
 	}
@@ -333,4 +325,8 @@ function convertMilitaryTimeToFullCalendarFormat(militaryTime){
 	}
 
 	return hour + ":" + minute + ":" + "00"
+}
+
+function scrollTo(id) {
+  Gentle_Anchors.Setup(id);
 }
