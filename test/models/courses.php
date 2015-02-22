@@ -177,8 +177,42 @@ class course
 		return $result;
 	}
 	
-
-
-
+	static function createValidSchedule($schedule)
+	{
+	//makes sure classes start and end times dont overlap
+	//works with only two classes currently
+		$course = new course();
+		$counter = 1;
+		foreach($schedule as $s)
+		{
+			if($counter == 1)
+			{
+				$course = $s;
+				$result[] = $course;
+			}
+			else
+			{
+				if($course->Title != $s->Title)
+				{
+					//$counter = 0
+					//foreach($result[] as $r)
+					//{
+					//if($counter == 0)
+					//{
+					if(!($s->Start >= $course->Start && $s->Start <= $course->End) && !($s->End >= $course->Start && $s->End <= $course->End))
+					{
+						$course = $s;
+						$result[] = $course;
+						//$counter = 1;
+					}	
+					//}
+					//}
+				}
+			}
+			$counter = $counter + 1;
+		}
+		return $result;
+	}
+	
 }
 ?>
