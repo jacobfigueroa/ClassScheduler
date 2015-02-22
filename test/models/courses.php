@@ -180,13 +180,14 @@ class course
 	static function createValidSchedule($schedule)
 	{
 	//makes sure classes start and end times dont overlap
-	//works with only two classes currently
+	//works with any amount of classes
 		$course = new course();
 		$counter = 0;
 		foreach($schedule as $s)
 		{
 			if($counter == 0)
 			{
+			//adds first classes first section no matter what
 				$course = $s;
 				$result[] = $course;
 				$counter = $counter + 1;
@@ -197,30 +198,37 @@ class course
 				{
 					for($i = 0; $i < $counter; $i++)
 					{
-						//$counter = 0
-						//foreach($result[] as $r)
-						//{
-						//if($counter == 0)
-						//{
-						if(!($s->Start >= $result[$i]->Start && $s->Start <= $result[$i]->End) && !($s->End >= $result[$i]->Start && $s->End <= $result[$i]->End))
+					//calls the timeoverlap function to check for overlapping
+						if($s->timeOverlap($s, $result[$i]))
 						{
 							$course = $s;
 							$result[] = $course;
 							$counter++;
 						}
-						else if(!($s->Start >= $result[$i]->Start && $s->Start <= $result[$i]->End) && !($s->End >= $result[$i]->Start && $s->End <= $result[$i]->End) && $s->Days !=$result[$i]->Days)
-						{
-							$course = $s;
-							$result[] = $course;
-							$counter++;
-						}
-						//}
-						//}
+
 					}
 				}
 			}
 		}
 		return $result;
+	}
+	
+	function timeOverlap($first, $second)
+	{
+	//checks to see if the times for two classes overlap
+		if(!($first->Start >= $second->Start && $first->Start <= $second->End) && !($first->End >= $second->Start && $first->End <= $second->End))
+		{
+		//checks the times and returns true if they dont
+			return true;
+		}
+		else if(!($first->Start >= $second->Start && $first->Start <= $second->End) && !($first->End >= $second->Start && $first->End <= $second->End) && $first->Days !=$second->Days)
+		{
+		//checks the days and returns true if they dont
+			return true;
+		}
+		else
+		//else they do
+			return false;
 	}
 	
 }
