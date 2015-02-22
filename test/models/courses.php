@@ -168,7 +168,7 @@ class course
 		$dayOff = 'F';
 		foreach($schedule as $s)
 		{
-			if (strpos($s->Days, $daysOff) === FALSE)
+			if (strpos($s->Days, $dayOff) === FALSE)
 			{
 				$course = $s;
 				$result[] = $course;
@@ -182,34 +182,43 @@ class course
 	//makes sure classes start and end times dont overlap
 	//works with only two classes currently
 		$course = new course();
-		$counter = 1;
+		$counter = 0;
 		foreach($schedule as $s)
 		{
-			if($counter == 1)
+			if($counter == 0)
 			{
 				$course = $s;
 				$result[] = $course;
+				$counter = $counter + 1;
 			}
 			else
 			{
 				if($course->Title != $s->Title)
 				{
-					//$counter = 0
-					//foreach($result[] as $r)
-					//{
-					//if($counter == 0)
-					//{
-					if(!($s->Start >= $course->Start && $s->Start <= $course->End) && !($s->End >= $course->Start && $s->End <= $course->End))
+					for($i = 0; $i < $counter; $i++)
 					{
-						$course = $s;
-						$result[] = $course;
-						//$counter = 1;
-					}	
-					//}
-					//}
+						//$counter = 0
+						//foreach($result[] as $r)
+						//{
+						//if($counter == 0)
+						//{
+						if(!($s->Start >= $result[$i]->Start && $s->Start <= $result[$i]->End) && !($s->End >= $result[$i]->Start && $s->End <= $result[$i]->End))
+						{
+							$course = $s;
+							$result[] = $course;
+							$counter++;
+						}
+						else if(!($s->Start >= $result[$i]->Start && $s->Start <= $result[$i]->End) && !($s->End >= $result[$i]->Start && $s->End <= $result[$i]->End) && $s->Days !=$result[$i]->Days)
+						{
+							$course = $s;
+							$result[] = $course;
+							$counter++;
+						}
+						//}
+						//}
+					}
 				}
 			}
-			$counter = $counter + 1;
 		}
 		return $result;
 	}
