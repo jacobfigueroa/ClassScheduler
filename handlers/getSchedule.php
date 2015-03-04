@@ -12,7 +12,8 @@ $daysOff = $_POST['daysOff'];
 $schedule = course::generateSchedule($courses,$dbh);
 //$sections = course::chooseASection($schedule);
 //$sections = course::returnOnlineClasses($schedule);
-$sections = course::removeFridayCourses($schedule);
+//$sections = course::removeFridayCourses($schedule);
+$sections = course::createValidSchedule($schedule);
 
 
 //For now:
