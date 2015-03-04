@@ -52,6 +52,7 @@ class course
 		return $course;
 	}
 
+	# Return all courses
 	static function findAll( $dbh ) {
 		$stmt = $dbh->prepare( "select * from ".course::$tableName );
 		$stmt->execute();
@@ -65,6 +66,7 @@ class course
 		return $result;
 	}
 
+	# Return all courses of a certain subject
 	static function findCoursesBySubject($subject, $dbh)
 	{
 		$stmt = $dbh->prepare( "select * from ".course::$tableName." where Subject = :Subject" );
@@ -79,9 +81,9 @@ class course
 		return $result;
 	}
 
+	# Return all unique courses of a certain subject. e.g. Only return CSCI 1301.01 and not CSCI 1301.01 and CSCI 1301.02 
 	static function findDistinctCoursesBySubject($subject, $dbh)
 	{
-		//SELECT DISTINCT CourseNumber,Title FROM `TABLE1` WHERE Subject = "CSCI"
 		$stmt = $dbh->prepare( "SELECT DISTINCT CourseNumber,Title FROM ".course::$tableName." WHERE Subject = :Subject" );
 		$stmt->bindParam( ':Subject', $subject );
 		$stmt->execute();
@@ -161,11 +163,11 @@ class course
 		return $result;
 	}
 	
-	static function removeFridayCourses($schedule)
+	static function removeCoursesByDay($schedule, $day)
 	{
 		//searches through all classes in schedule to remove specific days, can be easily modded to remove any day
 		$course = new course();
-		$dayOff = 'F';
+		$dayOff = $day;
 		foreach($schedule as $s)
 		{
 			if (strpos($s->Days, $dayOff) === FALSE)

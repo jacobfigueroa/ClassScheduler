@@ -164,7 +164,6 @@ $("#submitClasses").click(function() {
 				//create calendar
 				var calendar = createCalendar(schedule)
 				$("#calendar").append(calendar)
-
 				//Automatically scroll to the results
 				//scrollTo("#results")
 
