@@ -271,17 +271,28 @@ class course
 	function makeArray($schedule)
 	{
 		$course = new course();
+		$titleCounter = 0;
+		$sectionCounter = 0;
 		$counter = 0;
-		$counter2 = 0;
 		foreach($schedule as $s)
 		{
-			
+			if($counter == 0)
+			{
+				$course = $s;
+				$counter = $counter + 1;
+			}
 			if($course->Title != $s->Title)
 			{
-				$counter++;
-				$course = $s;
-				$result[] = $course;
+				$titleCourse = $s;
+				$result[$titleCounter] = $array;
+				$sectionCounter = 0;
+				array[$sectionCounter] = $course;
+				$titleCounter++;
 			}
+			
+			$course = $s;
+			$array[$sectionCounter] = $course;
+			$sectionCounter++;
 			
 			
 		}
