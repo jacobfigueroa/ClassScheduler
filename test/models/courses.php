@@ -286,7 +286,7 @@ class course
 				$titleCourse = $s;
 				$result[$titleCounter] = $array;
 				$sectionCounter = 0;
-				array[$sectionCounter] = $course;
+				$array[$sectionCounter] = $course;
 				$titleCounter++;
 			}
 			

@@ -77,9 +77,17 @@ $("#addClass").click(function() {
 $("#submitClasses").click(function() {
 	$("#results").parent().show()
 	$("#results").empty()
+	$("#results").html("Creating your perfect schedule...")
+	$('#calendar').fullCalendar('removeEvents')
 
 	var startTime = $("#startTime").val()
 	var endTime = $("#endTime").val()
+
+	
+	if(startTime == "")
+		startTime = "12:00 AM"
+	if(endTime == "")
+		endTime = "11:59 PM"
 	
 	// Convert times to military times since thats what the DB uses
 	startTime = convertTimeToMilitaryTime(startTime)
@@ -112,6 +120,7 @@ $("#submitClasses").click(function() {
 			'url' : 'handlers/getSchedule.php',
 			'data' : { 'courses' : courseArray, 'startTime' : startTime, 'endTime' : endTime, 'daysOff' : daysOff} }
 			).done( function(result) {
+				$("#results").empty()
 				//$("#results").append(result);
 			
 				//return result
@@ -263,7 +272,7 @@ function createCalendar (schedule) {
 		editable: false,
 		eventLimit: true, // allow "more" link when too many events
 		minTime: "07:00:00",
-		maxTime: "22:00:00",
+		//maxTime: "22:00:00",
 		columnFormat: "ddd"
 	});
 	
