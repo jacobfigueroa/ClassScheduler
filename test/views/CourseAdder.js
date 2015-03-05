@@ -1,4 +1,5 @@
 var courseCount = 0
+var schedules
 $("#results").parent().hide()
 
 $("#courseSelector").on("change","select", function(){
@@ -14,6 +15,7 @@ $("#courseSelector").on("change","select", function(){
 			'url' : 'handlers/getCourses.php',
 			'data' : { 'subject' : subject } }
 			).done( function( data ) {
+				//$("#courseSelector").append(data);
 				var courseList = "#courseList" + idNumber
 				$(courseList).empty();
 				var classes = $.parseJSON(data);
@@ -120,64 +122,10 @@ $("#submitClasses").click(function() {
 			'url' : 'handlers/getSchedule.php',
 			'data' : { 'courses' : courseArray, 'startTime' : startTime, 'endTime' : endTime, 'daysOff' : daysOff} }
 			).done( function(result) {
-				$("#results").empty()
-				//$("#results").append(result);
-			
-				//return result
-				var serverMessage = $("<h3>")
-				var center = $("<center>")
-				center.html("Your perfect schedule:")
-				serverMessage.html(center)
-
-				//serverMessage.html("The server responded with this:")
-				$("#results").append(serverMessage)
-
-				//uncomment the following once the php script is working
-				var schedule = $.parseJSON(result);
-
-
-				// Create a table to display the classes that are returned
-				var resultsTable = $("<table>").attr("class","table table-striped").attr("border",0)
-
-				// Create a table row that displays the keys.
-				var keyRow = $("<tr>").attr("class","text-left")
-				for (var key in schedule[0]) { 
-  					var tableData = $("<td>")
-  					tableData.html(key)
-  					keyRow.append(tableData)
-				}
-				resultsTable.append(keyRow)
-
-				// Create a table row that displays the values
-				for (var i = 0; i < schedule.length; i++) {
-					var tableRow = $("<tr>").attr("class","text-left")
-
-					// iterate through all keys
-					for (var key in schedule[i]) {
-						// get associated value
-						var value = schedule[i][key];
-      					var tableData = $("<td>")
-
-      					// Change military time from DB to normal time
-      					if (key == "Start" || key == "End") {
-      						tableData.html(convertMilitaryTimeToTime(value))
-      					} else {
-      						tableData.html(value)
-      					}
-      					
-      					tableRow.append(tableData)
-					}
-					resultsTable.append(tableRow)
-				}
-
-
-				$("#results").append(resultsTable)
-
-				//create calendar
-				var calendar = createCalendar(schedule)
-				$("#calendar").append(calendar)
-				//Automatically scroll to the results
-				//scrollTo("#results")
+				schedules = $.parseJSON(result)
+				console.log(schedules);
+				var firstSchedule = schedules[0]
+				showResult(firstSchedule)
 				
 			});
 });
@@ -336,4 +284,66 @@ function convertMilitaryTimeToFullCalendarFormat(militaryTime){
 
 function scrollTo(id) {
   Gentle_Anchors.Setup(id);
+}
+
+function showResult(result)
+{
+	$("#results").empty()
+				//$("#results").append(result);
+			
+				//return result
+				var serverMessage = $("<h3>")
+				var center = $("<center>")
+				center.html("Your perfect schedule:")
+				serverMessage.html(center)
+
+				//serverMessage.html("The server responded with this:")
+				$("#results").append(serverMessage)
+
+				//uncomment the following once the php script is working
+				var schedule = result//$.parseJSON(result);
+
+
+				// Create a table to display the classes that are returned
+				var resultsTable = $("<table>").attr("class","table table-striped").attr("border",0)
+
+				// Create a table row that displays the keys.
+				var keyRow = $("<tr>").attr("class","text-left")
+				for (var key in schedule[0]) { 
+  					var tableData = $("<td>")
+  					tableData.html(key)
+  					keyRow.append(tableData)
+				}
+				resultsTable.append(keyRow)
+
+				// Create a table row that displays the values
+				for (var i = 0; i < schedule.length; i++) {
+					var tableRow = $("<tr>").attr("class","text-left")
+
+					// iterate through all keys
+					for (var key in schedule[i]) {
+						// get associated value
+						var value = schedule[i][key];
+      					var tableData = $("<td>")
+
+      					// Change military time from DB to normal time
+      					if (key == "Start" || key == "End") {
+      						tableData.html(convertMilitaryTimeToTime(value))
+      					} else {
+      						tableData.html(value)
+      					}
+      					
+      					tableRow.append(tableData)
+					}
+					resultsTable.append(tableRow)
+				}
+
+
+				$("#results").append(resultsTable)
+
+				//create calendar
+				var calendar = createCalendar(schedule)
+				$("#calendar").append(calendar)
+				//Automatically scroll to the results
+				//scrollTo("#results")
 }

@@ -34,8 +34,10 @@ $sections = course::removeCoursesByTime($sections, $startTime, $endTime);
 $array = course::makeArray($sections);
 //$sections = course::createValidSchedule($sections);
 
+$schedule = course::array_cartesian_product($array);
 
 //Later change it to:
-echo json_encode($sections);
+//echo json_encode($sections);
 //echo json_encode($array);
+echo json_encode($schedule);
 ?>
