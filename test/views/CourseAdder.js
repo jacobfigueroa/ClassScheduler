@@ -121,8 +121,8 @@ $("#submitClasses").click(function() {
 			'data' : { 'courses' : courseArray, 'startTime' : startTime, 'endTime' : endTime, 'daysOff' : daysOff} }
 			).done( function(result) {
 				$("#results").empty()
-				$("#results").append(result);
-			/*
+				//$("#results").append(result);
+			
 				//return result
 				var serverMessage = $("<h3>")
 				var center = $("<center>")
@@ -178,7 +178,7 @@ $("#submitClasses").click(function() {
 				$("#calendar").append(calendar)
 				//Automatically scroll to the results
 				//scrollTo("#results")
-				*/
+				
 			});
 });
 
