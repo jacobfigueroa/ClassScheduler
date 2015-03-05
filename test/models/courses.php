@@ -200,7 +200,6 @@ class course
 	{
 		//searches through all classes in schedule to remove specific classes by start and end time
 		//if classes fall outside boundaries of preference, they are removed
-		//WIP
 		$course = new course();
 		
 		foreach($schedule as $s)
@@ -270,6 +269,7 @@ class course
 	
 	static function makeArray($schedule)
 	{
+	//makes a 2 dimensional array with all the classes that are passed to it
 		$course = new course();
 		$titleCounter = 0;
 		$sectionCounter = 0;
@@ -279,13 +279,15 @@ class course
 			if($counter == 0)
 			{
 				$course = $s;
-				$counter = $counter + 1;
+				$counter++;
 			}
 			if($course->Title != $s->Title)
 			{
 				$titleCourse = $s;
 				$result[$titleCounter] = $array;
 				$sectionCounter = 0;
+				unset($array);
+				$array = array();
 				$array[$sectionCounter] = $course;
 				$titleCounter++;
 			}
@@ -296,6 +298,7 @@ class course
 			
 			
 		}
+		$result[$titleCounter] = $array;
 		return $result;
 		
 	}

@@ -36,6 +36,6 @@ $array = course::makeArray($sections);
 
 
 //Later change it to:
-echo json_encode($sections);
-//echo json_encode($courses);
+//echo json_encode($sections);
+echo json_encode($array);
 ?>
