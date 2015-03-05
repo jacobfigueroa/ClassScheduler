@@ -268,7 +268,7 @@ class course
 			return false;
 	}
 	
-	function makeArray($schedule)
+	static function makeArray($schedule)
 	{
 		$course = new course();
 		$titleCounter = 0;

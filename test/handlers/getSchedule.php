@@ -31,7 +31,7 @@ if($daysOff["Friday"] === "true")
 	
 //if($startTime != null && $endTime != null)
 $sections = course::removeCoursesByTime($sections, $startTime, $endTime);
-
+$array = course::makeArray($sections);
 //$sections = course::createValidSchedule($sections);
 
 
