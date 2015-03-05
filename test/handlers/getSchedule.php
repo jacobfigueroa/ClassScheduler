@@ -32,11 +32,10 @@ if($daysOff["Friday"] === "true")
 //if($startTime != null && $endTime != null)
 $sections = course::removeCoursesByTime($sections, $startTime, $endTime);
 
-$sections = course::createValidSchedule($sections);
+//$sections = course::createValidSchedule($sections);
 
 
 //Later change it to:
 echo json_encode($sections);
-//echo json_encode($daysOff);
-//echo $startTime;
+//echo json_encode($courses);
 ?>
