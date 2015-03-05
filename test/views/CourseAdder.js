@@ -80,7 +80,7 @@ $("#submitClasses").click(function() {
 
 	var startTime = $("#startTime").val()
 	var endTime = $("#endTime").val()
-
+	
 	// Convert times to military times since thats what the DB uses
 	startTime = convertTimeToMilitaryTime(startTime)
 	endTime = convertTimeToMilitaryTime(endTime)
@@ -104,6 +104,7 @@ $("#submitClasses").click(function() {
 	}
 
 	console.log(courseArray)
+	console.log(startTime)
 	
 	//Send courses to handler
 	$.ajax( { 
@@ -111,6 +112,8 @@ $("#submitClasses").click(function() {
 			'url' : 'handlers/getSchedule.php',
 			'data' : { 'courses' : courseArray, 'startTime' : startTime, 'endTime' : endTime, 'daysOff' : daysOff} }
 			).done( function(result) {
+				//$("#results").append(result);
+			
 				//return result
 				var serverMessage = $("<h3>")
 				var center = $("<center>")
@@ -166,12 +169,7 @@ $("#submitClasses").click(function() {
 				$("#calendar").append(calendar)
 				//Automatically scroll to the results
 				//scrollTo("#results")
-
-				/*
-				$("#results").append("unparsedJSON:")
-				//delete this once the php script is working
-				$("#results").append(result)
-				*/
+				
 			});
 });
 

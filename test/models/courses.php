@@ -163,6 +163,23 @@ class course
 		return $result;
 	}
 	
+	static function removeOnlineClasses($schedule)
+	{
+		//searches through all classes in schedule and removes all classes that are online
+		$course = new course();
+		$searchPAram = 'L';
+		foreach($schedule as $s)
+		{
+			if (strpos($s->Section, $searchParam) === FALSE)
+			{
+				$course = $s;
+				$result[] = $course;
+			}
+		}
+		
+		return $result;
+	}
+	
 	static function removeCoursesByDay($schedule, $day)
 	{
 		//searches through all classes in schedule to remove specific days, can be easily modded to remove any day
@@ -171,6 +188,24 @@ class course
 		foreach($schedule as $s)
 		{
 			if (strpos($s->Days, $dayOff) === FALSE)
+			{
+				$course = $s;
+				$result[] = $course;
+			}
+		}
+		return $result;
+	}
+	
+	static function removeCoursesByTime($schedule, $start, $end)
+	{
+		//searches through all classes in schedule to remove specific classes by start and end time
+		//if classes fall outside boundaries of preference, they are removed
+		//WIP
+		$course = new course();
+		
+		foreach($schedule as $s)
+		{
+			if ((int)$s->Start >= $start && (int)$s->End <= $end)
 			{
 				$course = $s;
 				$result[] = $course;

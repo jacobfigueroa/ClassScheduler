@@ -3,10 +3,9 @@ require_once( "../models/DB.php" );
 require_once( "../models/courses.php" );
 
 $courses = $_POST['courses'];
-$startTime = $_POST['startTime'];
-$endTime = $_POST['endTime'];
+$startTime = (int)$_POST['startTime'];
+$endTime = (int)$_POST['endTime'];
 $daysOff = $_POST['daysOff'];
-
 
 $schedule = course::generateSchedule($courses,$dbh);
 //$sections = course::chooseASection($schedule);
@@ -29,10 +28,15 @@ if($daysOff["Friday"] === "true")
 	$sections = course::removeCoursesByDay($sections,"F");
 
 
-//$sections = course::createValidSchedule($schedule);
+	
+//if($startTime != null && $endTime != null)
+$sections = course::removeCoursesByTime($sections, $startTime, $endTime);
+
+$sections = course::createValidSchedule($sections);
 
 
 //Later change it to:
 echo json_encode($sections);
 //echo json_encode($daysOff);
+//echo $startTime;
 ?>
