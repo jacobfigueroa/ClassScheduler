@@ -268,5 +268,26 @@ class course
 			return false;
 	}
 	
+	function makeArray($schedule)
+	{
+		$course = new course();
+		$counter = 0;
+		$counter2 = 0;
+		foreach($schedule as $s)
+		{
+			
+			if($course->Title != $s->Title)
+			{
+				$counter++;
+				$course = $s;
+				$result[] = $course;
+			}
+			
+			
+		}
+		return $result;
+		
+	}
+	
 }
 ?>
