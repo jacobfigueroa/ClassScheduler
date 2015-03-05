@@ -1,5 +1,6 @@
 var courseCount = 0
 var schedules
+var scheduleIndex = 0;
 $("#results").parent().hide()
 
 $("#courseSelector").on("change","select", function(){
@@ -123,10 +124,7 @@ $("#submitClasses").click(function() {
 			'data' : { 'courses' : courseArray, 'startTime' : startTime, 'endTime' : endTime, 'daysOff' : daysOff} }
 			).done( function(result) {
 				schedules = $.parseJSON(result)
-				console.log(schedules);
-				var firstSchedule = schedules[0]
-				showResult(firstSchedule)
-				
+				showResult(schedules[scheduleIndex]) //Initially scheduleIndex = 0
 			});
 });
 
@@ -289,61 +287,96 @@ function scrollTo(id) {
 function showResult(result)
 {
 	$("#results").empty()
-				//$("#results").append(result);
-			
-				//return result
-				var serverMessage = $("<h3>")
-				var center = $("<center>")
-				center.html("Your perfect schedule:")
-				serverMessage.html(center)
+	//$("#results").append(result);
 
-				//serverMessage.html("The server responded with this:")
-				$("#results").append(serverMessage)
+	//return result
+	var serverMessage = $("<h3>")
+	var center = $("<center>")
+	center.html("Your perfect schedule:")
+	serverMessage.html(center)
 
-				//uncomment the following once the php script is working
-				var schedule = result//$.parseJSON(result);
+	//serverMessage.html("The server responded with this:")
+	$("#results").append(serverMessage)
+
+	//uncomment the following once the php script is working
+	var schedule = result//$.parseJSON(result);
 
 
-				// Create a table to display the classes that are returned
-				var resultsTable = $("<table>").attr("class","table table-striped").attr("border",0)
+	// Create a table to display the classes that are returned
+	var resultsTable = $("<table>").attr("class","table table-striped").attr("border",0)
 
-				// Create a table row that displays the keys.
-				var keyRow = $("<tr>").attr("class","text-left")
-				for (var key in schedule[0]) { 
-  					var tableData = $("<td>")
-  					tableData.html(key)
-  					keyRow.append(tableData)
+	// Create a table row that displays the keys.
+	var keyRow = $("<tr>").attr("class","text-left")
+	for (var key in schedule[0]) { 
+			var tableData = $("<td>")
+			tableData.html(key)
+			keyRow.append(tableData)
+	}
+	resultsTable.append(keyRow)
+
+	// Create a table row that displays the values
+	for (var i = 0; i < schedule.length; i++) {
+		var tableRow = $("<tr>").attr("class","text-left")
+
+		// iterate through all keys
+		for (var key in schedule[i]) {
+			// get associated value
+			var value = schedule[i][key];
+				var tableData = $("<td>")
+
+				// Change military time from DB to normal time
+				if (key == "Start" || key == "End") {
+					tableData.html(convertMilitaryTimeToTime(value))
+				} else {
+					tableData.html(value)
 				}
-				resultsTable.append(keyRow)
-
-				// Create a table row that displays the values
-				for (var i = 0; i < schedule.length; i++) {
-					var tableRow = $("<tr>").attr("class","text-left")
-
-					// iterate through all keys
-					for (var key in schedule[i]) {
-						// get associated value
-						var value = schedule[i][key];
-      					var tableData = $("<td>")
-
-      					// Change military time from DB to normal time
-      					if (key == "Start" || key == "End") {
-      						tableData.html(convertMilitaryTimeToTime(value))
-      					} else {
-      						tableData.html(value)
-      					}
-      					
-      					tableRow.append(tableData)
-					}
-					resultsTable.append(tableRow)
-				}
+				
+				tableRow.append(tableData)
+		}
+		resultsTable.append(tableRow)
+	}
 
 
-				$("#results").append(resultsTable)
+	$("#results").append(resultsTable)
 
-				//create calendar
-				var calendar = createCalendar(schedule)
-				$("#calendar").append(calendar)
-				//Automatically scroll to the results
-				//scrollTo("#results")
+	//create calendar
+	var calendar = createCalendar(schedule)
+	$("#calendar").append(calendar)
+	//Automatically scroll to the results
+	//scrollTo("#results")
+
+	var prevScheduleButton = $("<button>") 
+	prevScheduleButton.attr("type","button")
+	prevScheduleButton.attr("class","btn btn-default")
+	prevScheduleButton.attr("id","prevScheduleButton")
+	prevScheduleButton.html("Previous Schedule")
+	
+	var nextScheduleButton = $("<button>") 
+	nextScheduleButton.attr("type","button")
+	nextScheduleButton.attr("class","btn btn-default")
+	nextScheduleButton.attr("id","nextScheduleButton")
+	nextScheduleButton.html("Next Schedule")
+
+
+	$("#results").append(prevScheduleButton)
+	$("#results").append(nextScheduleButton)
 }
+
+$("#results").on("click","button", function() {
+	if( $(this).attr("id") == "nextScheduleButton")
+	{
+		if(scheduleIndex + 1 < schedules.length)
+		{
+			scheduleIndex++
+			showResult(schedules[scheduleIndex])
+		}
+	}
+	if( $(this).attr("id") == "prevScheduleButton")
+	{
+		if(scheduleIndex - 1 >= 0)
+		{
+			scheduleIndex--
+			showResult(schedules[scheduleIndex])
+		}
+	}
+});
