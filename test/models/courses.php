@@ -340,5 +340,31 @@ class course
 	    }
 	    return $result;
 	}
+
+	static function removeOverlappingCourses($schedules)
+	{
+		foreach($schedules as $s)
+		{
+			$courseOverlap = false;
+			foreach ($s as $course1)
+			{
+				foreach ($s as $course2)
+				{
+					if ($course1 !== $course2)
+					{
+						if(!$course1->timeOverlap($course1,$course2))
+						{
+							$courseOverlap = true;
+						}
+					}
+				}
+			}
+
+			if($courseOverlap === false)
+				$result[] = $s;
+
+		}
+		return $result;
+	}
 }
 ?>

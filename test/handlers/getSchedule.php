@@ -35,6 +35,7 @@ $array = course::makeArray($sections);
 //$sections = course::createValidSchedule($sections);
 
 $schedule = course::array_cartesian_product($array);
+$schedule = course::removeOverlappingCourses($schedule);
 
 //Later change it to:
 //echo json_encode($sections);

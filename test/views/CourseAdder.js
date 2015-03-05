@@ -123,6 +123,7 @@ $("#submitClasses").click(function() {
 			'url' : 'handlers/getSchedule.php',
 			'data' : { 'courses' : courseArray, 'startTime' : startTime, 'endTime' : endTime, 'daysOff' : daysOff} }
 			).done( function(result) {
+				$("#results").append(result)
 				schedules = $.parseJSON(result)
 				showResult(schedules[scheduleIndex]) //Initially scheduleIndex = 0
 			});
