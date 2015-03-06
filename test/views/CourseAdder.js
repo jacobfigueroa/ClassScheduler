@@ -78,6 +78,7 @@ $("#addClass").click(function() {
 });
 
 $("#submitClasses").click(function() {
+	scheduleIndex = 0
 	$("#results").parent().show()
 	$("#results").empty()
 	$("#results").html("Creating your perfect schedule...")
@@ -210,7 +211,8 @@ function createCalendar (schedule) {
 
 	$('#calendar').fullCalendar('removeEvents')
 
-		
+	//var earlestStartTime = getEarliestStartTimeOfClasses(schedule)
+	//earlestStartTime = convertMilitaryTimeToFullCalendarFormat(earlestStartTime)
 	$('#calendar').fullCalendar({
 		header: false,
 		defaultView: 'agendaWeek',
@@ -220,6 +222,7 @@ function createCalendar (schedule) {
 		eventLimit: true, // allow "more" link when too many events
 		minTime: "07:00:00",
 		//maxTime: "22:00:00",
+		//minTime: earlestStartTime,
 		columnFormat: "ddd"
 	});
 
@@ -251,6 +254,19 @@ function createCalendar (schedule) {
 			$('#calendar').fullCalendar( 'renderEvent', newEvent );
 		}
 	}
+}
+
+function getEarliestStartTimeOfClasses(schedule)
+{
+	var minTime = schedule[0]["Start"]
+	for(var i = 0; i < schedule.length; i++)
+	{
+		if(schedule[i]["Start"] < minTime)
+		{
+			minTime = schedule[i]["Start"]
+		}
+	}
+	return minTime
 }
 function getColor(i) {
 	var colors = ["red", "blue", "green", "black", "orange", "purple"];
@@ -367,7 +383,7 @@ function showResult(result)
 	$("#results").append(" ")
 	$("#results").append(nextScheduleButton)
 	$("#results").append(" ")
-	
+
 	//Since scheduleIndex is 0 based. It wouldn't make sense to the user to display Schedule 0
 	//Instead add 1 to the index
 	var text = "Schedule " + (scheduleIndex + 1) + " of " + schedules.length 
