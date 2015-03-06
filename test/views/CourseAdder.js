@@ -230,28 +230,42 @@ function createCalendar (schedule) {
 	for (var i = 0; i < schedule.length; i++) {
 		var days = splitDays(schedule[i]);
 		var color = getColor(i)
-		for (var j = 0; j < days.length; j++) {
-			var newEvent = new Object();
-			newEvent.title = schedule[i]["CourseName"] + " " + schedule[i]["Title"] + " " + schedule[i]["Instructor"]
-			newEvent.color = color
-			var day;
-			//lazy way to do it
-			if (days[j] == "M") {
-				day = "2015-02-09"
-			} else if (days[j] == "T") {
-				day = "2015-02-10"
-			} else if (days[j] == "W") {
-				day = "2015-02-11"
-			} else if (days[j] == "R") {
-				day = "2015-02-12"
-			} else if (days[j] == "F") {
-				day = "2015-02-13"
-			}
-			newEvent.start = day + "T" + convertMilitaryTimeToFullCalendarFormat(schedule[i]["Start"])
-			newEvent.end = day + "T" + convertMilitaryTimeToFullCalendarFormat(schedule[i]["End"])
-			newEvent.allDay = false;
 
-			$('#calendar').fullCalendar( 'renderEvent', newEvent );
+		if(days == "") // The class has no meeting days (online)
+		{
+				var newEvent = new Object();
+				newEvent.title = schedule[i]["CourseName"] + " " + schedule[i]["Title"] + " " + schedule[i]["Instructor"]
+				newEvent.color = color
+				newEvent.start = "2015-02-09"
+				newEvent.end = "2015-02-14"
+				newEvent.allDay = true;
+				$('#calendar').fullCalendar( 'renderEvent', newEvent );
+		}
+		else
+		{
+			for (var j = 0; j < days.length; j++) {
+				var newEvent = new Object();
+				newEvent.title = schedule[i]["CourseName"] + " " + schedule[i]["Title"] + " " + schedule[i]["Instructor"]
+				newEvent.color = color
+				var day;
+				//lazy way to do it
+				if (days[j] == "M") {
+					day = "2015-02-09"
+				} else if (days[j] == "T") {
+					day = "2015-02-10"
+				} else if (days[j] == "W") {
+					day = "2015-02-11"
+				} else if (days[j] == "R") {
+					day = "2015-02-12"
+				} else if (days[j] == "F") {
+					day = "2015-02-13"
+				}
+				newEvent.start = day + "T" + convertMilitaryTimeToFullCalendarFormat(schedule[i]["Start"])
+				newEvent.end = day + "T" + convertMilitaryTimeToFullCalendarFormat(schedule[i]["End"])
+				newEvent.allDay = false;
+
+				$('#calendar').fullCalendar( 'renderEvent', newEvent );
+			}
 		}
 	}
 }
