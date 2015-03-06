@@ -364,7 +364,14 @@ function showResult(result)
 
 
 	$("#results").append(prevScheduleButton)
+	$("#results").append(" ")
 	$("#results").append(nextScheduleButton)
+	$("#results").append(" ")
+	
+	//Since scheduleIndex is 0 based. It wouldn't make sense to the user to display Schedule 0
+	//Instead add 1 to the index
+	var text = "Schedule " + (scheduleIndex + 1) + " of " + schedules.length 
+	$("#results").append(text)
 }
 
 $("#results").on("click","button", function() {
