@@ -59,7 +59,7 @@ $("#courseSelector").on("change","select", function(){
 $("#addClass").click(function() {
 	courseCount += 1
 
-	if (courseCount <= 6) {
+	if (courseCount < 6) {
 
 		var newCourse = $("#course0").clone()
 
@@ -222,15 +222,15 @@ function createCalendar (schedule) {
 		//maxTime: "22:00:00",
 		columnFormat: "ddd"
 	});
-	
+
 				
 	for (var i = 0; i < schedule.length; i++) {
 		var days = splitDays(schedule[i]);
-
+		var color = getColor(i)
 		for (var j = 0; j < days.length; j++) {
 			var newEvent = new Object();
-			newEvent.title = schedule[i]["CourseName"] + " " + schedule[i]["Title"]
-
+			newEvent.title = schedule[i]["CourseName"] + " " + schedule[i]["Title"] + " " + schedule[i]["Instructor"]
+			newEvent.color = color
 			var day;
 			//lazy way to do it
 			if (days[j] == "M") {
@@ -251,6 +251,10 @@ function createCalendar (schedule) {
 			$('#calendar').fullCalendar( 'renderEvent', newEvent );
 		}
 	}
+}
+function getColor(i) {
+	var colors = ["red", "blue", "green", "yellow", "orange", "purple"];
+	return colors[i]
 }
 
 function splitDays(course)
