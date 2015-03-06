@@ -158,12 +158,12 @@ function convertTimeToMilitaryTime (time) {
 
 	hour = parseInt(hour)
 
-	if (meridiem == "PM") {
+	if (meridiem.toUpperCase() == "PM") {
 		if(hour != 12 ) {
 			hour += 12
 		}
 	}
-	if (meridiem == "AM") {
+	if (meridiem.toUpperCase() == "AM") {
 		if(hour == 12) {
 			hour = 0
 		}
