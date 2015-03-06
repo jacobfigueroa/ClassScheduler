@@ -253,7 +253,7 @@ function createCalendar (schedule) {
 	}
 }
 function getColor(i) {
-	var colors = ["red", "blue", "green", "yellow", "orange", "purple"];
+	var colors = ["red", "blue", "green", "black", "orange", "purple"];
 	return colors[i]
 }
 
