@@ -352,9 +352,12 @@ class course
 				{
 					if ($course1 !== $course2)
 					{
-						if(!$course1->timeOverlap($course1,$course2))
+						if($course1->Days === $course2->Days)
 						{
-							$courseOverlap = true;
+							if(!$course1->timeOverlap($course1,$course2))
+							{
+								$courseOverlap = true;
+							}
 						}
 					}
 				}
