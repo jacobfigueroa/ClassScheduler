@@ -317,20 +317,38 @@ class course
 
 	}
 */
-	static function array_cartesian_product($arrays)
+	#$arrays contains all possible courses a person can take.
+	#Each array in $arrays is organized by course
+	#For example $arrays[0] contains an array of all possible ENG 1301 courses
+	#For example $arrays[1] contains an array of all possible CSCI 1370 courses
+	#And so on...
+	#This function will return all possible combinations of all those courses
+	static function createAllPossibleSchedules($arrays)
 	{
 	    $result = array();
 	    $arrays = array_values($arrays);
-	    $sizeIn = sizeof($arrays);
-	    $size = $sizeIn > 0 ? 1 : 0;
+
+	    $size = sizeof($arrays) > 0 ? 1 : 0;
+
+	    #Calculate the number of combinations
 	    foreach ($arrays as $array)
-	        $size = $size * sizeof($array);
-	    for ($i = 0; $i < $size; $i ++)
+	    {
+	        $size *= sizeof($array);
+	    }
+
+	    #Make each schedule
+	    for ($i = 0; $i < $size; $i++)
 	    {
 	        $result[$i] = array();
-	        for ($j = 0; $j < $sizeIn; $j ++)
-	            array_push($result[$i], current($arrays[$j]));
-	        for ($j = ($sizeIn -1); $j >= 0; $j --)
+
+	        #The size of $arrays is equal to the number of courses that a person is taking
+	        for ($j = 0; $j < sizeof($arrays); $j++)
+	        {
+	        	#Put next course in the array
+	            $result[$i][] = current($arrays[$j]);
+	        }
+
+	        for ($j = ($sizeIn -1); $j >= 0; $j--)
 	        {
 	            if (next($arrays[$j]))
 	                break;

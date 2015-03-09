@@ -34,7 +34,7 @@ $sections = course::removeCoursesByTime($sections, $startTime, $endTime);
 $array = course::makeArray($sections);
 //$sections = course::createValidSchedule($sections);
 
-$schedule = course::array_cartesian_product($array);
+$schedule = course::createAllPossibleSchedules($array);
 $schedule = course::removeOverlappingCourses($schedule);
 
 //Later change it to:
