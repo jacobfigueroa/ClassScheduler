@@ -351,10 +351,19 @@ class course
 
 	        for ($j = (sizeof($arrays) -1); $j >= 0; $j--)
 	        {
+	        	#Advance to next course for the next subject
+	        	#If there is another course, break out of the loop, this way only one course is changed per schedule
 	            if (next($arrays[$j]))
+	            {
 	                break;
+	            }
+
+	            #If there is not another course and $arrays[$j] is set:
+	            #reset the pointer to the first element
 	            elseif (isset ($arrays[$j]))
+	            {
 	                reset($arrays[$j]);
+	            }
 	        }
 	    }
 	    return $result;
