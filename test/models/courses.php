@@ -345,7 +345,8 @@ class course
 	        for ($j = 0; $j < sizeof($arrays); $j++)
 	        {
 	        	#Put next course in the array
-	            $result[$i][] = current($arrays[$j]);
+	        	$currentCourse = current($arrays[$j]);
+	            $result[$i][] = $currentCourse;
 	        }
 
 	        for ($j = (sizeof($arrays) -1); $j >= 0; $j--)
