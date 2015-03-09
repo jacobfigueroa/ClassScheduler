@@ -348,7 +348,7 @@ class course
 	            $result[$i][] = current($arrays[$j]);
 	        }
 
-	        for ($j = ($sizeIn -1); $j >= 0; $j--)
+	        for ($j = (sizeof($arrays) -1); $j >= 0; $j--)
 	        {
 	            if (next($arrays[$j]))
 	                break;
