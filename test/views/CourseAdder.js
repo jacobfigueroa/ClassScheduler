@@ -84,6 +84,29 @@ $("#submitClasses").click(function() {
 	$("#results").html("Creating your perfect schedule...")
 	$('#calendar').fullCalendar('removeEvents')
 
+
+	///////////////////////////////
+	//THIS WILL BE THE NEW FORMAT//
+	var days = ["M", "T", "W", "R", "F"];
+	var daysInfo = [];
+	for(var i = 0; i < days.length; i++)
+	{
+		var day = days[i]
+		var startTime = convertTimeToMilitaryTime( $("#"+day).children(".startTime").val() )
+		var endTime = convertTimeToMilitaryTime( $("#"+day).children(".endTime").val() )
+		var daysOff = $("#"+day).children(".dayOffCheckBox").prop("checked")
+
+		var dayInfo = { day : { "startTime" : startTime, 
+								"endTime" : endTime,
+								"dayOff" : daysOff } }
+
+		daysInfo.push(dayInfo)
+	}
+	console.log(daysInfo)
+	///////////////////////////////
+	///////////////////////////////
+
+
 	var startTime = $("#startTime").val()
 	var endTime = $("#endTime").val()
 
@@ -96,21 +119,6 @@ $("#submitClasses").click(function() {
 	// Convert times to military times since thats what the DB uses
 	startTime = convertTimeToMilitaryTime(startTime)
 	endTime = convertTimeToMilitaryTime(endTime)
-
-	///////////////////////////////
-	//THIS WILL BE THE NEW FORMAT//
-	var days = ["M", "T", "W", "R", "F"];
-	var daysInfo = [];
-	for(var i = 0; i < days.length; i++)
-	{
-		var day = days[i]
-		var dayInfo = { day : [{ "startTime" : $("#"+day).children(".startTime").val(), "endTime" : $("#"+day).children(".endTime").val(), "dayOff" : $("#"+day).children(".dayOffCheckBox").prop("checked") }] }
-
-		daysInfo.push(dayInfo)
-	}
-	console.log(daysInfo)
-	///////////////////////////////
-	///////////////////////////////
 
 	//Create array that stores what days off the users wants
 	var daysOff = { "Monday" : $("#mondayCheckBox").prop("checked"), "Tuesday" : $("#tuesdayCheckBox").prop("checked"), 
