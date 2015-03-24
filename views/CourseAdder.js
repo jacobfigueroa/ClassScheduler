@@ -1,4 +1,6 @@
 var courseCount = 0
+var schedules
+var scheduleIndex = 0;
 $("#results").parent().hide()
 
 $("#courseSelector").on("change","select", function(){
@@ -14,6 +16,7 @@ $("#courseSelector").on("change","select", function(){
 			'url' : 'handlers/getCourses.php',
 			'data' : { 'subject' : subject } }
 			).done( function( data ) {
+				//$("#courseSelector").append(data);
 				var courseList = "#courseList" + idNumber
 				$(courseList).empty();
 				var classes = $.parseJSON(data);
@@ -56,7 +59,7 @@ $("#courseSelector").on("change","select", function(){
 $("#addClass").click(function() {
 	courseCount += 1
 
-	if (courseCount <= 6) {
+	if (courseCount < 6) {
 
 		var newCourse = $("#course0").clone()
 
@@ -75,12 +78,44 @@ $("#addClass").click(function() {
 });
 
 $("#submitClasses").click(function() {
+	scheduleIndex = 0
 	$("#results").parent().show()
 	$("#results").empty()
+	$("#results").html("Creating your perfect schedule...")
+	$('#calendar').fullCalendar('removeEvents')
+
+
+	///////////////////////////////
+	//THIS WILL BE THE NEW FORMAT//
+	var days = ["M", "T", "W", "R", "F"];
+	var daysInfo = [];
+	for(var i = 0; i < days.length; i++)
+	{
+		var day = days[i]
+		var startTime = convertTimeToMilitaryTime( $("#"+day).children(".startTime").val() )
+		var endTime = convertTimeToMilitaryTime( $("#"+day).children(".endTime").val() )
+		var daysOff = $("#"+day).children(".dayOffCheckBox").prop("checked")
+
+		var dayInfo = { day : { "startTime" : startTime, 
+								"endTime" : endTime,
+								"dayOff" : daysOff } }
+
+		daysInfo.push(dayInfo)
+	}
+	console.log(daysInfo)
+	///////////////////////////////
+	///////////////////////////////
+
 
 	var startTime = $("#startTime").val()
 	var endTime = $("#endTime").val()
 
+	
+	if(startTime == "")
+		startTime = "12:00 AM"
+	if(endTime == "")
+		endTime = "11:59 PM"
+	
 	// Convert times to military times since thats what the DB uses
 	startTime = convertTimeToMilitaryTime(startTime)
 	endTime = convertTimeToMilitaryTime(endTime)
@@ -103,7 +138,8 @@ $("#submitClasses").click(function() {
 				$(requiredCheckBox).prop('checked'), $(onlineCheckBox).prop('checked')]
 	}
 
-	console.log(courseArray)
+	//console.log(courseArray)
+	//console.log(startTime)
 	
 	//Send courses to handler
 	$.ajax( { 
@@ -111,68 +147,9 @@ $("#submitClasses").click(function() {
 			'url' : 'handlers/getSchedule.php',
 			'data' : { 'courses' : courseArray, 'startTime' : startTime, 'endTime' : endTime, 'daysOff' : daysOff} }
 			).done( function(result) {
-				//return result
-				var serverMessage = $("<h3>")
-				var center = $("<center>")
-				center.html("Your perfect schedule:")
-				serverMessage.html(center)
-
-				//serverMessage.html("The server responded with this:")
-				$("#results").append(serverMessage)
-
-				//uncomment the following once the php script is working
-				var schedule = $.parseJSON(result);
-
-
-				// Create a table to display the classes that are returned
-				var resultsTable = $("<table>").attr("class","table table-striped").attr("border",0)
-
-				// Create a table row that displays the keys.
-				var keyRow = $("<tr>").attr("class","text-left")
-				for (var key in schedule[0]) { 
-  					var tableData = $("<td>")
-  					tableData.html(key)
-  					keyRow.append(tableData)
-				}
-				resultsTable.append(keyRow)
-
-				// Create a table row that displays the values
-				for (var i = 0; i < schedule.length; i++) {
-					var tableRow = $("<tr>").attr("class","text-left")
-
-					// iterate through all keys
-					for (var key in schedule[i]) {
-						// get associated value
-						var value = schedule[i][key];
-      					var tableData = $("<td>")
-
-      					// Change military time from DB to normal time
-      					if (key == "Start" || key == "End") {
-      						tableData.html(convertMilitaryTimeToTime(value))
-      					} else {
-      						tableData.html(value)
-      					}
-      					
-      					tableRow.append(tableData)
-					}
-					resultsTable.append(tableRow)
-				}
-
-
-				$("#results").append(resultsTable)
-
-				//create calendar
-				var calendar = createCalendar(schedule)
-				$("#calendar").append(calendar)
-
-				//Automatically scroll to the results
-				//scrollTo("#results")
-
-				/*
-				$("#results").append("unparsedJSON:")
-				//delete this once the php script is working
 				$("#results").append(result)
-				*/
+				schedules = $.parseJSON(result)
+				showResult(schedules[scheduleIndex]) //Initially scheduleIndex = 0
 			});
 });
 
@@ -204,12 +181,12 @@ function convertTimeToMilitaryTime (time) {
 
 	hour = parseInt(hour)
 
-	if (meridiem == "PM") {
+	if (meridiem.toUpperCase() == "PM") {
 		if(hour != 12 ) {
 			hour += 12
 		}
 	}
-	if (meridiem == "AM") {
+	if (meridiem.toUpperCase() == "AM") {
 		if(hour == 12) {
 			hour = 0
 		}
@@ -257,7 +234,8 @@ function createCalendar (schedule) {
 
 	$('#calendar').fullCalendar('removeEvents')
 
-		
+	//var earlestStartTime = getEarliestStartTimeOfClasses(schedule)
+	//earlestStartTime = convertMilitaryTimeToFullCalendarFormat(earlestStartTime)
 	$('#calendar').fullCalendar({
 		header: false,
 		defaultView: 'agendaWeek',
@@ -266,37 +244,70 @@ function createCalendar (schedule) {
 		editable: false,
 		eventLimit: true, // allow "more" link when too many events
 		minTime: "07:00:00",
+		//maxTime: "22:00:00",
+		//minTime: earlestStartTime,
 		columnFormat: "ddd"
 	});
-	
+
 				
 	for (var i = 0; i < schedule.length; i++) {
 		var days = splitDays(schedule[i]);
+		var color = getColor(i)
 
-		for (var j = 0; j < days.length; j++) {
-			var newEvent = new Object();
-			newEvent.title = schedule[i]["CourseName"] + " " + schedule[i]["Title"]
+		if(days == "") // The class has no meeting days (online)
+		{
+				var newEvent = new Object();
+				newEvent.title = schedule[i]["CourseName"] + " " + schedule[i]["Title"] + " " + schedule[i]["Instructor"]
+				newEvent.color = color
+				newEvent.start = "2015-02-09"
+				newEvent.end = "2015-02-14"
+				newEvent.allDay = true;
+				$('#calendar').fullCalendar( 'renderEvent', newEvent );
+		}
+		else
+		{
+			for (var j = 0; j < days.length; j++) {
+				var newEvent = new Object();
+				newEvent.title = schedule[i]["CourseName"] + " " + schedule[i]["Title"] + " " + schedule[i]["Instructor"]
+				newEvent.color = color
+				var day;
+				//lazy way to do it
+				if (days[j] == "M") {
+					day = "2015-02-09"
+				} else if (days[j] == "T") {
+					day = "2015-02-10"
+				} else if (days[j] == "W") {
+					day = "2015-02-11"
+				} else if (days[j] == "R") {
+					day = "2015-02-12"
+				} else if (days[j] == "F") {
+					day = "2015-02-13"
+				}
+				newEvent.start = day + "T" + convertMilitaryTimeToFullCalendarFormat(schedule[i]["Start"])
+				newEvent.end = day + "T" + convertMilitaryTimeToFullCalendarFormat(schedule[i]["End"])
+				newEvent.allDay = false;
 
-			var day;
-			//lazy way to do it
-			if (days[j] == "M") {
-				day = "2015-02-09"
-			} else if (days[j] == "T") {
-				day = "2015-02-10"
-			} else if (days[j] == "W") {
-				day = "2015-02-11"
-			} else if (days[j] == "R") {
-				day = "2015-02-12"
-			} else if (days[j] == "F") {
-				day = "2015-02-13"
+				$('#calendar').fullCalendar( 'renderEvent', newEvent );
 			}
-			newEvent.start = day + "T" + convertMilitaryTimeToFullCalendarFormat(schedule[i]["Start"])
-			newEvent.end = day + "T" + convertMilitaryTimeToFullCalendarFormat(schedule[i]["End"])
-			newEvent.allDay = false;
-
-			$('#calendar').fullCalendar( 'renderEvent', newEvent );
 		}
 	}
+}
+
+function getEarliestStartTimeOfClasses(schedule)
+{
+	var minTime = schedule[0]["Start"]
+	for(var i = 0; i < schedule.length; i++)
+	{
+		if(schedule[i]["Start"] < minTime)
+		{
+			minTime = schedule[i]["Start"]
+		}
+	}
+	return minTime
+}
+function getColor(i) {
+	var colors = ["red", "blue", "green", "black", "orange", "purple"];
+	return colors[i]
 }
 
 function splitDays(course)
@@ -330,3 +341,107 @@ function convertMilitaryTimeToFullCalendarFormat(militaryTime){
 function scrollTo(id) {
   Gentle_Anchors.Setup(id);
 }
+
+function showResult(result)
+{
+	$("#results").empty()
+	//$("#results").append(result);
+
+	//return result
+	var serverMessage = $("<h3>")
+	var center = $("<center>")
+	center.html("Your perfect schedule:")
+	serverMessage.html(center)
+
+	//serverMessage.html("The server responded with this:")
+	$("#results").append(serverMessage)
+
+	//uncomment the following once the php script is working
+	var schedule = result//$.parseJSON(result);
+
+
+	// Create a table to display the classes that are returned
+	var resultsTable = $("<table>").attr("class","table table-striped").attr("border",0)
+
+	// Create a table row that displays the keys.
+	var keyRow = $("<tr>").attr("class","text-left")
+	for (var key in schedule[0]) { 
+			var tableData = $("<td>")
+			tableData.html(key)
+			keyRow.append(tableData)
+	}
+	resultsTable.append(keyRow)
+
+	// Create a table row that displays the values
+	for (var i = 0; i < schedule.length; i++) {
+		var tableRow = $("<tr>").attr("class","text-left")
+
+		// iterate through all keys
+		for (var key in schedule[i]) {
+			// get associated value
+			var value = schedule[i][key];
+				var tableData = $("<td>")
+
+				// Change military time from DB to normal time
+				if (key == "Start" || key == "End") {
+					tableData.html(convertMilitaryTimeToTime(value))
+				} else {
+					tableData.html(value)
+				}
+				
+				tableRow.append(tableData)
+		}
+		resultsTable.append(tableRow)
+	}
+
+
+	$("#results").append(resultsTable)
+
+	//create calendar
+	var calendar = createCalendar(schedule)
+	$("#calendar").append(calendar)
+	//Automatically scroll to the results
+	//scrollTo("#results")
+
+	var prevScheduleButton = $("<button>") 
+	prevScheduleButton.attr("type","button")
+	prevScheduleButton.attr("class","btn btn-default")
+	prevScheduleButton.attr("id","prevScheduleButton")
+	prevScheduleButton.html("Previous Schedule")
+	
+	var nextScheduleButton = $("<button>") 
+	nextScheduleButton.attr("type","button")
+	nextScheduleButton.attr("class","btn btn-default")
+	nextScheduleButton.attr("id","nextScheduleButton")
+	nextScheduleButton.html("Next Schedule")
+
+
+	$("#results").append(prevScheduleButton)
+	$("#results").append(" ")
+	$("#results").append(nextScheduleButton)
+	$("#results").append(" ")
+
+	//Since scheduleIndex is 0 based. It wouldn't make sense to the user to display Schedule 0
+	//Instead add 1 to the index
+	var text = "Schedule " + (scheduleIndex + 1) + " of " + schedules.length 
+	$("#results").append(text)
+}
+
+$("#results").on("click","button", function() {
+	if( $(this).attr("id") == "nextScheduleButton")
+	{
+		if(scheduleIndex + 1 < schedules.length)
+		{
+			scheduleIndex++
+			showResult(schedules[scheduleIndex])
+		}
+	}
+	if( $(this).attr("id") == "prevScheduleButton")
+	{
+		if(scheduleIndex - 1 >= 0)
+		{
+			scheduleIndex--
+			showResult(schedules[scheduleIndex])
+		}
+	}
+});

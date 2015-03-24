@@ -4,3 +4,23 @@ body {
 	font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
 	font-size: 14px;
 }
+
+.days {
+    overflow:hidden;
+	text-align: left;
+	margin: 0px auto;
+	padding: 0px;
+	border:0;
+	width: 1000px;
+	position: relative;
+}
+
+#preferencesList, #M, #T, #W, #R, #F {
+	float: left;
+	width: (100/6)%;
+}
+
+.dayOffCheckBox {
+	position: absolute; 
+	bottom: 0;
+}
