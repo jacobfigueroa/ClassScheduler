@@ -97,6 +97,21 @@ $("#submitClasses").click(function() {
 	startTime = convertTimeToMilitaryTime(startTime)
 	endTime = convertTimeToMilitaryTime(endTime)
 
+	///////////////////////////////
+	//THIS WILL BE THE NEW FORMAT//
+	var days = ["M", "T", "W", "R", "F"];
+	var daysInfo = [];
+	for(var i = 0; i < days.length; i++)
+	{
+		var day = days[i]
+		var dayInfo = { day : [{ "startTime" : $("#"+day).children(".startTime").val(), "endTime" : $("#"+day).children(".endTime").val(), "dayOff" : $("#"+day).children(".dayOffCheckBox").prop("checked") }] }
+
+		daysInfo.push(dayInfo)
+	}
+	console.log(daysInfo)
+	///////////////////////////////
+	///////////////////////////////
+
 	//Create array that stores what days off the users wants
 	var daysOff = { "Monday" : $("#mondayCheckBox").prop("checked"), "Tuesday" : $("#tuesdayCheckBox").prop("checked"), 
 				"Wednesday" : $("#wednesdayCheckBox").prop("checked"), "Thursday" : $("#thursdayCheckBox").prop("checked"),
@@ -115,8 +130,8 @@ $("#submitClasses").click(function() {
 				$(requiredCheckBox).prop('checked'), $(onlineCheckBox).prop('checked')]
 	}
 
-	console.log(courseArray)
-	console.log(startTime)
+	//console.log(courseArray)
+	//console.log(startTime)
 	
 	//Send courses to handler
 	$.ajax( { 
