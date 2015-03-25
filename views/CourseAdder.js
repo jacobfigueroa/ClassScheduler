@@ -87,6 +87,7 @@ $("#submitClasses").click(function() {
 
 	///////////////////////////////
 	//THIS WILL BE THE NEW FORMAT//
+	/*
 	var days = ["M", "T", "W", "R", "F"];
 	var daysInfo = [];
 	for(var i = 0; i < days.length; i++)
@@ -103,6 +104,7 @@ $("#submitClasses").click(function() {
 		daysInfo.push(dayInfo)
 	}
 	console.log(daysInfo)
+	*/
 	///////////////////////////////
 	///////////////////////////////
 
