@@ -107,7 +107,7 @@ $("#submitClasses").click(function() {
 		var day = days[i]
 		var startTime = $("#"+day).children(".startTime").val()
 		var endTime = $("#"+day).children(".endTime").val()
-		var daysOff = $("#"+day).children(".dayOffCheckBox").prop("checked")
+		var dayOff = $("#"+day).children(".dayOffCheckBox").prop("checked")
 
 
 		if(startTime == "")
@@ -122,7 +122,7 @@ $("#submitClasses").click(function() {
 
 		var dayInfo = { day : { "startTime" : startTime, 
 								"endTime" : endTime,
-								"dayOff" : daysOff } }
+								"dayOff" : dayOff } }
 
 		daysInfo.push(dayInfo)
 	}
@@ -130,7 +130,7 @@ $("#submitClasses").click(function() {
 	///////////////////////////////
 	///////////////////////////////
 
-
+	/*
 	var startTime = $("#startTime").val()
 	var endTime = $("#endTime").val()
 
@@ -149,7 +149,7 @@ $("#submitClasses").click(function() {
 				"Wednesday" : $("#wednesdayCheckBox").prop("checked"), "Thursday" : $("#thursdayCheckBox").prop("checked"),
 				"Friday" : $("#fridayCheckBox").prop("checked") }
 
-
+				*/
 	//Create array that will hold the courses that a user selected
 	var courseArray = []
 	for (var i = 0; i <= courseCount; i++) {
@@ -161,15 +161,13 @@ $("#submitClasses").click(function() {
 		//courseArray[i] = [ $(subjectListSelect).val(), $(classListSelect).val(), $(requiredCheckBox).prop('checked'), $(onlineCheckBox).prop('checked')]
 		courseArray[i] = [ $(subjectListSelect).val(), $(classListSelect).val(), $(onlineCheckBox).prop('checked')]
 	}
-
-	//console.log(courseArray)
-	//console.log(startTime)
 	
 	//Send courses to handler
 	$.ajax( { 
 			'type' : 'POST',
 			'url' : 'handlers/getSchedule.php',
-			'data' : { 'courses' : courseArray, 'startTime' : startTime, 'endTime' : endTime, 'daysOff' : daysOff} }
+			//'data' : { 'courses' : courseArray, 'startTime' : startTime, 'endTime' : endTime, 'daysOff' : daysOff} } //Old working data
+			'data' : { 'courses' : courseArray, 'daysInfo' : daysInfo } }
 			).done( function(result) {
 				$("#results").append(result)
 				schedules = $.parseJSON(result)
