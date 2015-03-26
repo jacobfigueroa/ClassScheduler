@@ -78,6 +78,18 @@ $("#addClass").click(function() {
 });
 
 $("#submitClasses").click(function() {
+
+	var allClassesFilledIn = true;
+	for (var i = 0; i <= courseCount; i++) {
+		var subjectListSelect = "#subjectListSelect" + i
+		if($(subjectListSelect).val() == "NULL") {
+			allClassesFilledIn = false;
+			console.log("Course " + i + " was left blank. Please fill in all course info.");
+			return;
+		}
+	}
+
+
 	scheduleIndex = 0
 	$("#results").parent().show()
 	$("#results").empty()
