@@ -38,6 +38,7 @@ $("#courseSelector").on("change","select", function(){
 
 
 				//Create a checkbox so that a user may designate if a course is required 
+				/*
 				var requiredCheckBox = $("<input>")
 				requiredCheckBox.attr("type","checkbox")
 				requiredCheckBox.attr("id","requiredCheckBox"+courseCount)
@@ -45,7 +46,7 @@ $("#courseSelector").on("change","select", function(){
 				$(courseList).append(requiredCheckBox);
 
 				$(courseList).append("<br>");
-
+				*/
 				//Create a checkbox so that a user may designate if they want an online course
 				var onlineCheckBox = $("<input>")
 				onlineCheckBox.attr("type","checkbox")
@@ -154,11 +155,11 @@ $("#submitClasses").click(function() {
 	for (var i = 0; i <= courseCount; i++) {
 		var subjectListSelect = "#subjectListSelect" + i
 		var classListSelect = "#classListSelect" + i
-		var requiredCheckBox = "#requiredCheckBox" + i
+		//var requiredCheckBox = "#requiredCheckBox" + i
 		var onlineCheckBox = "#onlineCheckBox" + i
 		//$("#results").append("<p>" + $(subjectListSelect).val() + " " + $(classListSelect).val() + "</p>")
-		courseArray[i] = [ $(subjectListSelect).val(), $(classListSelect).val(), 
-				$(requiredCheckBox).prop('checked'), $(onlineCheckBox).prop('checked')]
+		//courseArray[i] = [ $(subjectListSelect).val(), $(classListSelect).val(), $(requiredCheckBox).prop('checked'), $(onlineCheckBox).prop('checked')]
+		courseArray[i] = [ $(subjectListSelect).val(), $(classListSelect).val(), $(onlineCheckBox).prop('checked')]
 	}
 
 	//console.log(courseArray)
