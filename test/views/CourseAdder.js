@@ -92,9 +92,20 @@ $("#submitClasses").click(function() {
 	for(var i = 0; i < days.length; i++)
 	{
 		var day = days[i]
-		var startTime = convertTimeToMilitaryTime( $("#"+day).children(".startTime").val() )
-		var endTime = convertTimeToMilitaryTime( $("#"+day).children(".endTime").val() )
+		var startTime = $("#"+day).children(".startTime").val()
+		var endTime = $("#"+day).children(".endTime").val()
 		var daysOff = $("#"+day).children(".dayOffCheckBox").prop("checked")
+
+
+		if(startTime == "")
+			startTime = "12:00 AM"
+		if(endTime == "")
+			endTime = "11:59 PM"
+
+		startTime = convertTimeToMilitaryTime( startTime )
+		endTime = convertTimeToMilitaryTime( endTime )
+
+
 
 		var dayInfo = { day : { "startTime" : startTime, 
 								"endTime" : endTime,
