@@ -213,6 +213,26 @@ class course
 		return $result;
 	}
 	
+	static function removeCoursesByDayAndTime($schedule, $day, $start, $end)
+	{
+		//searches through all classes in schedule to remove specific classes by start and end time on specific day
+		//if classes fall outside boundaries of preference, they are removed
+		$course = new course();
+		foreach($schedule as $s)
+		{
+			if (strpos($s->Days, $day) === TRUE)
+			{
+				if ((int)$s->Start >= $start && (int)$s->End <= $end)
+				{
+					$course = $s;
+					$result[] = $course;
+				}
+			}
+		}
+		return $result;
+		
+	}
+	
 	static function createValidSchedule($schedule)
 	{
 	//makes sure classes start and end times dont overlap
@@ -382,10 +402,13 @@ class course
 					{
 						if($course1->Days === $course2->Days)
 						{
-							if(!$course1->timeOverlap($course1,$course2))
+							if (strpos($course1->Section, 'L') === FALSE)
 							{
-								$courseOverlap = true;
-							}
+								if(!$course1->timeOverlap($course1,$course2))
+								{
+									$courseOverlap = true;
+								}	
+							}	
 						}
 					}
 				}

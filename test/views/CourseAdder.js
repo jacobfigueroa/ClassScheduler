@@ -170,8 +170,8 @@ $("#submitClasses").click(function() {
 			'data' : { 'courses' : courseArray, 'daysInfo' : daysInfo } }
 			).done( function(result) {
 				$("#results").append(result)
-				schedules = $.parseJSON(result)
-				showResult(schedules[scheduleIndex]) //Initially scheduleIndex = 0
+				//schedules = $.parseJSON(result)
+				//showResult(schedules[scheduleIndex]) //Initially scheduleIndex = 0
 			});
 });
 
