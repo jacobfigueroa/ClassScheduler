@@ -180,11 +180,36 @@ class course
 		return $result;
 	}
 	
+	static function returnDay($day)
+	{
+		if($day == 1)
+			$dayOff = 'M';
+		if($day == 2)
+			$dayOff = 'T';
+		if($day == 3)
+			$dayOff = 'W';
+		if($day == 4)
+			$dayOff = 'R';
+		else
+			$dayOff = 'F';
+		return $dayOff;
+	
+	}
+	
 	static function removeCoursesByDay($schedule, $day)
 	{
 		//searches through all classes in schedule to remove specific days, can be easily modded to remove any day
 		$course = new course();
-		$dayOff = $day;
+		if($day == 0)
+			$dayOff = 'M';
+		if($day == 1)
+			$dayOff = 'T';
+		if($day == 2)
+			$dayOff = 'W';
+		if($day == 3)
+			$dayOff = 'R';
+		else
+			$dayOff = 'F';
 		foreach($schedule as $s)
 		{
 			if (strpos($s->Days, $dayOff) === FALSE)
@@ -218,15 +243,30 @@ class course
 		//searches through all classes in schedule to remove specific classes by start and end time on specific day
 		//if classes fall outside boundaries of preference, they are removed
 		$course = new course();
+		if($day == 0)
+			$days = 'M';
+		if($day == 1)
+			$days = 'T';
+		if($day == 2)
+			$days = 'W';
+		if($day == 3)
+			$days = 'R';
+		else
+			$days = 'F';
 		foreach($schedule as $s)
 		{
-			if (strpos($s->Days, $day) === TRUE)
+			if (strpos($s->Days, $days) === TRUE)
 			{
 				if ((int)$s->Start >= $start && (int)$s->End <= $end)
 				{
 					$course = $s;
 					$result[] = $course;
 				}
+			}
+			else
+			{
+				$course = $s;
+				$result[] = $course;
 			}
 		}
 		return $result;
