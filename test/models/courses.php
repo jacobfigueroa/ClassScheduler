@@ -98,7 +98,7 @@ class course
 	}
 	
 	
-	static function generateSchedule($courses, $dbh)
+	static function getAllSections($courses, $dbh)
 	{
 		//grabs all sections of the chosen classes
 		foreach ($courses as $c)
@@ -196,20 +196,10 @@ class course
 	
 	}
 	
-	static function removeCoursesByDay($schedule, $day)
+	static function removeCoursesByDay($schedule, $dayOff)
 	{
 		//searches through all classes in schedule to remove specific days, can be easily modded to remove any day
 		$course = new course();
-		if($day == 0)
-			$dayOff = 'M';
-		if($day == 1)
-			$dayOff = 'T';
-		if($day == 2)
-			$dayOff = 'W';
-		if($day == 3)
-			$dayOff = 'R';
-		if($day == 4)
-			$dayOff = 'F';
 		foreach($schedule as $s)
 		{
 			if (strpos($s->Days, $dayOff) === FALSE)
@@ -243,20 +233,10 @@ class course
 		//searches through all classes in schedule to remove specific classes by start and end time on specific day
 		//if classes fall outside boundaries of preference, they are removed
 		$course = new course();
-		if($day == 0)
-			$days = 'M';
-		if($day == 1)
-			$days = 'T';
-		if($day == 2)
-			$days = 'W';
-		if($day == 3)
-			$days = 'R';
-		if($day == 4)
-			$days = 'F';
 
 		foreach($schedule as $s)
 		{
-			if (strpos($s->Days, $days) !== FALSE)
+			if (strpos($s->Days, $day) !== FALSE)
 			{
 				if ((int)$s->Start >= (int)$start && (int)$s->End <= (int)$end)
 				{
@@ -364,20 +344,6 @@ class course
 		
 	}
 
-/*
-	static function createAllPossibleSchedules($courses)
-	{
-		for($i = 0; $i < $courses[0].length(); $i++)
-		{
-			$schedule[] = $course[0][$i] + returnPossibleSchedules($course[$i])
-		}
-	}
-
-	static function returnPossibleSchedules($courses)
-	{
-
-	}
-*/
 	#$arrays contains all possible courses a person can take.
 	#Each array in $arrays is organized by course
 	#For example $arrays[0] contains an array of all possible ENG 1301 courses

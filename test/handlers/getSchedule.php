@@ -8,20 +8,14 @@ $startTime = (int)$_POST['startTime'];
 $endTime = (int)$_POST['endTime'];
 $daysOff = $_POST['daysOff'];
 
-$schedule = course::generateSchedule($courses,$dbh);
+$sections = course::getAllSections($courses,$dbh);
 
-$sections = $schedule;
-
-for($i = 0; $i < 5; $i++)
-{
-	if($timeInfo[$i]["day"]["dayOff"] == "true")
-	{
-		$sections = course::removeCoursesByDay($sections,$i);
-	}
-	else
-	{
-		if( (int)$timeInfo[$i]["day"]["startTime"] !== 0 && (int)$timeInfo[$i]["day"]["endTime"] !== 2359 )
-			$sections = course::removeCoursesByDayAndTime($sections, $i, $timeInfo[$i]["day"]["startTime"], $timeInfo[$i]["day"]["endTime"]);
+$days = ["M","T","W","R","F"];
+for($i = 0; $i < count($days); $i++) {
+	if($timeInfo[$i]["day"]["dayOff"] == "true") {
+		$sections = course::removeCoursesByDay($sections,$days[$i]);
+	} else if ( (int)$timeInfo[$i]["day"]["startTime"] !== 0 || (int)$timeInfo[$i]["day"]["endTime"] !== 2359 ) {
+		$sections = course::removeCoursesByDayAndTime($sections, $days[$i], $timeInfo[$i]["day"]["startTime"], $timeInfo[$i]["day"]["endTime"]);
 	}
 }
 
@@ -30,3 +24,4 @@ $schedule = course::createAllPossibleSchedules($array);
 $schedule = course::removeOverlappingCourses($schedule);
 echo json_encode($schedule);
 ?>
+
