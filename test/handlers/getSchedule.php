@@ -17,9 +17,8 @@ $schedule = course::generateSchedule($courses,$dbh);
 
 $sections = $schedule;
 
-$i = 0;
 //foreach ($timeInfo[0]["day"]["dayOff"] as $d
-while($i < 5)
+for($i = 0; $i < 5; $i++)
 {
 	if($timeInfo[$i]["day"]["dayOff"] == "true")
 	{
@@ -27,9 +26,9 @@ while($i < 5)
 	}
 	else
 	{
-		$sections = course::removeCoursesByDayAndTime($sections, $i, $sections,$d["day"]["startTime"], $sections,$d["day"]["endTime"]);
+		//echo "<br>" . $i . "Start: " . $timeInfo[$i]["day"]["startTime"] . " End: " . $timeInfo[$i]["day"]["endTime"] . "<br><br>";
+		$sections = course::removeCoursesByDayAndTime($sections, $i, $timeInfo[$i]["day"]["startTime"], $timeInfo[$i]["day"]["endTime"]);
 	}
-	$i += 1;
 }
 
 /* foreach ($timeInfo as $d)

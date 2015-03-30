@@ -251,13 +251,14 @@ class course
 			$days = 'W';
 		if($day == 3)
 			$days = 'R';
-		else
+		if($day == 4)
 			$days = 'F';
+
 		foreach($schedule as $s)
 		{
-			if (strpos($s->Days, $days) === TRUE)
+			if (strpos($s->Days, $days) !== FALSE)
 			{
-				if ((int)$s->Start >= $start && (int)$s->End <= $end)
+				if ((int)$s->Start >= (int)$start && (int)$s->End <= (int)$end)
 				{
 					$course = $s;
 					$result[] = $course;
