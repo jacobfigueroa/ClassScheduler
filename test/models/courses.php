@@ -208,7 +208,7 @@ class course
 			$dayOff = 'W';
 		if($day == 3)
 			$dayOff = 'R';
-		else
+		if($day == 4)
 			$dayOff = 'F';
 		foreach($schedule as $s)
 		{
