@@ -4,8 +4,6 @@ require_once( "../models/courses.php" );
 
 $courses = $_POST['courses'];
 $timeInfo = $_POST['daysInfo'];
-$startTime = (int)$_POST['startTime'];
-$endTime = (int)$_POST['endTime'];
 $daysOff = $_POST['daysOff'];
 
 $sections = course::getAllSections($courses,$dbh);
