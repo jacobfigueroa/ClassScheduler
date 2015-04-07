@@ -22,4 +22,3 @@ $schedule = course::createAllPossibleSchedules($array);
 $schedule = course::removeOverlappingCourses($schedule);
 echo json_encode($schedule);
 ?>
-

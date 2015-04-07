@@ -3,6 +3,7 @@ class course
 {
 	# class reflects a db table
 	public static $tableName = "TABLE1";
+	public static $error = [];
 
 	# data columns
 	public $CourseName;

@@ -80,16 +80,8 @@ $("#addClass").click(function() {
 
 $("#submitClasses").click(function() {
 
-	var allClassesFilledIn = true;
-	for (var i = 0; i <= courseCount; i++) {
-		var subjectListSelect = "#subjectListSelect" + i
-		if($(subjectListSelect).val() == "NULL") {
-			allClassesFilledIn = false;
-			console.log("Course " + i + " was left blank. Please fill in all course info.");
-			return;
-		}
-	}
-
+	if (!areAllClassesFilledIn())
+		return;
 
 	scheduleIndex = 0
 	$("#results").parent().show()
@@ -175,7 +167,17 @@ $("#submitClasses").click(function() {
 			});
 });
 
-
+function areAllClassesFilledIn() {
+	var allClassesFilledIn = true;
+	for (var i = 0; i <= courseCount; i++) {
+		var subjectListSelect = "#subjectListSelect" + i
+		if($(subjectListSelect).val() == "NULL") {
+			allClassesFilledIn = false;
+			console.log("Course " + (i+1) + " was left blank. Please fill in all course info.");
+		}
+	}
+	return allClassesFilledIn;
+}
 // Example: 11:54 AM to 1154. 2:35 PM to 1435.
 function convertTimeToMilitaryTime (time) {
 	var locationOfColon = 0
