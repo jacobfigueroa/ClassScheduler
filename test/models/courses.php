@@ -105,8 +105,8 @@ class course
 		foreach ($courses as $c)
 		{
 			$stmt = $dbh->prepare( "SELECT * FROM ".course::$tableName." WHERE Subject = :Subject AND CourseNumber = :CourseNumber" );
-			$stmt->bindParam( ':Subject', $c[0] );
-			$stmt->bindParam( ':CourseNumber', $c[1] );
+			$stmt->bindParam( ':Subject', $c["Subject"] );
+			$stmt->bindParam( ':CourseNumber', $c["CourseNumber"] );
 			$stmt->execute();
 			
 			while( $row = $stmt->fetch() ) 

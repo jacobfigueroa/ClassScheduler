@@ -120,8 +120,9 @@ $("#submitClasses").click(function() {
 		var subjectListSelectId = "#subjectListSelect" + i
 		var classListSelectId = "#classListSelect" + i
 		var onlineRadioButtonSelector = "input:radio[name=onlineRadioButton"+i+"]:checked"
-		courseArray[i] = [ $(subjectListSelectId).val(), $(classListSelectId).val(), $(onlineRadioButtonSelector).val()]
-		console.log(courseArray[i])
+		courseArray[i] = { "Subject" : $(subjectListSelectId).val(),
+							"CourseNumber" : $(classListSelectId).val(),
+							"Online" : $(onlineRadioButtonSelector).val() }
 	}
 	
 	var blockSchedule = $('input:radio[name=block]:checked').val();
