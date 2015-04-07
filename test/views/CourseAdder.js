@@ -39,11 +39,38 @@ $("#courseSelector").on("change","select", function(){
 				$(courseList).append("<br>");
 
 				//Create a checkbox so that a user may designate if they want an online course
+				/*
 				var onlineCheckBox = $("<input>")
 				onlineCheckBox.attr("type","checkbox")
 				onlineCheckBox.attr("id","onlineCheckBox"+courseCount)
 				$(courseList).append("Online?  ");
 				$(courseList).append(onlineCheckBox);
+				*/
+
+				$(courseList).append("Online?  ");
+
+				var onlineRadioButton = $("<input>")
+				onlineRadioButton.attr("type","radio")
+				onlineRadioButton.attr("name", "onlineRadioButton"+courseCount)
+				onlineRadioButton.attr("value","yes")
+				$(courseList).append(onlineRadioButton);
+				$(courseList).append(" Yes ");
+
+				onlineRadioButton = $("<input>")
+				onlineRadioButton.attr("type","radio")
+				onlineRadioButton.attr("name", "onlineRadioButton"+courseCount)
+				onlineRadioButton.attr("value","no")
+				$(courseList).append(onlineRadioButton);
+				$(courseList).append(" No ");
+
+
+				onlineRadioButton = $("<input>")
+				onlineRadioButton.attr("type","radio")
+				onlineRadioButton.attr("name", "onlineRadioButton"+courseCount)
+				onlineRadioButton.attr("value","indifferent")
+				onlineRadioButton.attr("checked","checked")
+				$(courseList).append(onlineRadioButton);
+				$(courseList).append(" Indifferent");
 			});
 	}
 });
@@ -92,15 +119,17 @@ $("#submitClasses").click(function() {
 	for (var i = 0; i <= courseCount; i++) {
 		var subjectListSelectId = "#subjectListSelect" + i
 		var classListSelectId = "#classListSelect" + i
-		var onlineCheckBoxId = "#onlineCheckBox" + i
-		courseArray[i] = [ $(subjectListSelectId).val(), $(classListSelectId).val(), $(onlineCheckBoxId).prop('checked')]
+		var onlineRadioButtonSelector = "input:radio[name=onlineRadioButton"+i+"]:checked"
+		courseArray[i] = [ $(subjectListSelectId).val(), $(classListSelectId).val(), $(onlineRadioButtonSelector).val()]
+		console.log(courseArray[i])
 	}
 	
+	var blockSchedule = $('input:radio[name=block]:checked').val();
 	//Send courses to handler
 	$.ajax( { 
 			'type' : 'POST',
 			'url' : 'handlers/getSchedule.php',
-			'data' : { 'courses' : courseArray, 'daysInfo' : daysInfo } }
+			'data' : { 'courses' : courseArray, 'daysInfo' : daysInfo, 'blockSchedule' : blockSchedule } }
 			).done( function(result) {
 				$("#results").append(result)
 				schedules = $.parseJSON(result)
