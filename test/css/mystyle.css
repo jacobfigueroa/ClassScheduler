@@ -24,3 +24,7 @@ body {
 	position: absolute; 
 	bottom: 0;
 }
+
+#errors {
+	color: red;
+}

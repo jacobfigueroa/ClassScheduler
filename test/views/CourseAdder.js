@@ -1,7 +1,10 @@
 var courseCount = 0
 var schedules
 var scheduleIndex = 0;
+var errors = [];
+
 $("#results").parent().hide()
+$("#errors").hide()
 
 $("#courseSelector").on("change","select", function(){
 	if( $(this).attr("class") == "subjectListSelect" ) {
@@ -79,48 +82,21 @@ $("#addClass").click(function() {
 });
 
 $("#submitClasses").click(function() {
+	hideAndResetErrors();
 
-	if (!areAllClassesFilledIn())
+	if (!areAllClassesFilledIn()) {
+		showErrors();
 		return;
+	}
+
+	var daysInfo = [];
+	daysInfo = prepareDaysInfo();
 
 	scheduleIndex = 0
 	$("#results").parent().show()
 	$("#results").empty()
 	$("#results").html("Creating your perfect schedule...")
 	$('#calendar').fullCalendar('removeEvents')
-
-
-	///////////////////////////////
-	//THIS WILL BE THE NEW FORMAT//
-	var days = ["M", "T", "W", "R", "F"];
-	var daysInfo = [];
-	for(var i = 0; i < days.length; i++)
-	{
-		var day = days[i]
-		var startTime = $("#"+day).children(".startTime").val()
-		var endTime = $("#"+day).children(".endTime").val()
-		var dayOff = $("#"+day).children(".dayOffCheckBox").prop("checked")
-
-
-		if(startTime == "")
-			startTime = "12:00 AM"
-		if(endTime == "")
-			endTime = "11:59 PM"
-
-		startTime = convertTimeToMilitaryTime( startTime )
-		endTime = convertTimeToMilitaryTime( endTime )
-
-
-
-		var dayInfo = { day : { "startTime" : startTime, 
-								"endTime" : endTime,
-								"dayOff" : dayOff } }
-
-		daysInfo.push(dayInfo)
-	}
-	console.log(daysInfo)
-	///////////////////////////////
-	///////////////////////////////
 
 	/*
 	var startTime = $("#startTime").val()
@@ -167,16 +143,72 @@ $("#submitClasses").click(function() {
 			});
 });
 
+function hideAndResetErrors() {
+	$("#errors").hide();
+	errors = []
+}
+
+function showErrors() {
+	$("#errors").empty();
+	$("#errors").show();
+	for (var i = 0; i < errors.length; i++) {
+		console.log(errors[i])
+		$("#errors").append(errors[i] + "<br>");
+	}
+}
+
 function areAllClassesFilledIn() {
 	var allClassesFilledIn = true;
 	for (var i = 0; i <= courseCount; i++) {
 		var subjectListSelect = "#subjectListSelect" + i
 		if($(subjectListSelect).val() == "NULL") {
 			allClassesFilledIn = false;
-			console.log("Course " + (i+1) + " was left blank. Please fill in all course info.");
+			errors.push("Course " + (i+1) + " was left blank. Please fill in all course info.");
 		}
 	}
 	return allClassesFilledIn;
+}
+
+function prepareDaysInfo() {
+		///////////////////////////////
+	//THIS WILL BE THE NEW FORMAT//
+	var days = ["M", "T", "W", "R", "F"];
+	var fullDaysName = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+	var daysInfo = [];
+	for(var i = 0; i < days.length; i++)
+	{
+		var day = days[i]
+		var startTime = $("#"+day).children(".startTime").val()
+		var endTime = $("#"+day).children(".endTime").val()
+		var dayOff = $("#"+day).children(".dayOffCheckBox").prop("checked")
+
+
+		if(startTime == "")
+			startTime = "12:00 AM"
+		if(endTime == "")
+			endTime = "11:59 PM"
+
+		startTime = convertTimeToMilitaryTime( startTime )
+		endTime = convertTimeToMilitaryTime( endTime )
+
+		if(startTime == "Not proper format" ) {
+			console.log("Not proper format for start time for " + fullDaysName[i])
+			errors.push("Not proper format for start time for " + fullDaysName[i])
+		}
+		if (endTime == "Not proper format") {
+			errors.push("Not proper format for end time for " + fullDaysName[i])
+		}
+
+		var dayInfo = { day : { "startTime" : startTime, 
+								"endTime" : endTime,
+								"dayOff" : dayOff } }
+
+		daysInfo.push(dayInfo)
+	}
+	console.log(daysInfo)
+	return daysInfo;
+	///////////////////////////////
+	///////////////////////////////
 }
 // Example: 11:54 AM to 1154. 2:35 PM to 1435.
 function convertTimeToMilitaryTime (time) {
