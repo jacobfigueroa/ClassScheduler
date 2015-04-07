@@ -11,7 +11,6 @@ $("#courseSelector").on("change","select", function(){
 		var subject = $(this).val()
 		var id = $(this).attr("id")
 		var idNumber = id.substr(id.length-1,id.length-1) //start,end. Returns last character
-		//console.log(idNumber)
 
 		//Send subject selected, return list of courses associated with that subject
 		$.ajax( { 
@@ -39,17 +38,6 @@ $("#courseSelector").on("change","select", function(){
 				$(courseList).append(classList);
 				$(courseList).append("<br>");
 
-
-				//Create a checkbox so that a user may designate if a course is required 
-				/*
-				var requiredCheckBox = $("<input>")
-				requiredCheckBox.attr("type","checkbox")
-				requiredCheckBox.attr("id","requiredCheckBox"+courseCount)
-				$(courseList).append("Required?  ");
-				$(courseList).append(requiredCheckBox);
-
-				$(courseList).append("<br>");
-				*/
 				//Create a checkbox so that a user may designate if they want an online course
 				var onlineCheckBox = $("<input>")
 				onlineCheckBox.attr("type","checkbox")
@@ -98,43 +86,20 @@ $("#submitClasses").click(function() {
 	$("#results").html("Creating your perfect schedule...")
 	$('#calendar').fullCalendar('removeEvents')
 
-	/*
-	var startTime = $("#startTime").val()
-	var endTime = $("#endTime").val()
 
-	
-	if(startTime == "")
-		startTime = "12:00 AM"
-	if(endTime == "")
-		endTime = "11:59 PM"
-	
-	// Convert times to military times since thats what the DB uses
-	startTime = convertTimeToMilitaryTime(startTime)
-	endTime = convertTimeToMilitaryTime(endTime)
-
-	//Create array that stores what days off the users wants
-	var daysOff = { "Monday" : $("#mondayCheckBox").prop("checked"), "Tuesday" : $("#tuesdayCheckBox").prop("checked"), 
-				"Wednesday" : $("#wednesdayCheckBox").prop("checked"), "Thursday" : $("#thursdayCheckBox").prop("checked"),
-				"Friday" : $("#fridayCheckBox").prop("checked") }
-
-				*/
 	//Create array that will hold the courses that a user selected
 	var courseArray = []
 	for (var i = 0; i <= courseCount; i++) {
-		var subjectListSelect = "#subjectListSelect" + i
-		var classListSelect = "#classListSelect" + i
-		//var requiredCheckBox = "#requiredCheckBox" + i
-		var onlineCheckBox = "#onlineCheckBox" + i
-		//$("#results").append("<p>" + $(subjectListSelect).val() + " " + $(classListSelect).val() + "</p>")
-		//courseArray[i] = [ $(subjectListSelect).val(), $(classListSelect).val(), $(requiredCheckBox).prop('checked'), $(onlineCheckBox).prop('checked')]
-		courseArray[i] = [ $(subjectListSelect).val(), $(classListSelect).val(), $(onlineCheckBox).prop('checked')]
+		var subjectListSelectId = "#subjectListSelect" + i
+		var classListSelectId = "#classListSelect" + i
+		var onlineCheckBoxId = "#onlineCheckBox" + i
+		courseArray[i] = [ $(subjectListSelectId).val(), $(classListSelectId).val(), $(onlineCheckBoxId).prop('checked')]
 	}
 	
 	//Send courses to handler
 	$.ajax( { 
 			'type' : 'POST',
 			'url' : 'handlers/getSchedule.php',
-			//'data' : { 'courses' : courseArray, 'startTime' : startTime, 'endTime' : endTime, 'daysOff' : daysOff} } //Old working data
 			'data' : { 'courses' : courseArray, 'daysInfo' : daysInfo } }
 			).done( function(result) {
 				$("#results").append(result)
@@ -290,8 +255,6 @@ function createCalendar (schedule) {
 
 	$('#calendar').fullCalendar('removeEvents')
 
-	//var earlestStartTime = getEarliestStartTimeOfClasses(schedule)
-	//earlestStartTime = convertMilitaryTimeToFullCalendarFormat(earlestStartTime)
 	$('#calendar').fullCalendar({
 		header: false,
 		defaultView: 'agendaWeek',
@@ -300,8 +263,6 @@ function createCalendar (schedule) {
 		editable: false,
 		eventLimit: true, // allow "more" link when too many events
 		minTime: "07:00:00",
-		//maxTime: "22:00:00",
-		//minTime: earlestStartTime,
 		columnFormat: "ddd"
 	});
 
@@ -372,10 +333,8 @@ function splitDays(course)
 	//Will have to make a seperate entry in calendar for each day of class.
 	//For example a MWF class will need an entry on Monday, Wednesday and Friday.
 	//So the below code will take care of that.
-	//for (var i = 0; i < schedule.length; i++) {
-		var days = course["Days"].split(" ")
-		return days
-	//}
+	var days = course["Days"].split(" ")
+	return days
 }
 
 function convertMilitaryTimeToFullCalendarFormat(militaryTime){
@@ -401,7 +360,6 @@ function scrollTo(id) {
 function showResult(result)
 {
 	$("#results").empty()
-	//$("#results").append(result);
 
 	//return result
 	var serverMessage = $("<h3>")
