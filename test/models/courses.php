@@ -104,9 +104,19 @@ class course
 		//grabs all sections of the chosen classes
 		foreach ($courses as $c)
 		{
-			$stmt = $dbh->prepare( "SELECT * FROM ".course::$tableName." WHERE Subject = :Subject AND CourseNumber = :CourseNumber" );
+			$stmt = "";
+			
+			if ($c["Online"] === "yes") {
+				$stmt = $dbh->prepare( "SELECT * FROM ".course::$tableName." WHERE Subject = :Subject AND CourseNumber = :CourseNumber AND Section LIKE '%L'" );
+			} else if ($c["Online"] === "no") {
+				$stmt = $dbh->prepare( "SELECT * FROM ".course::$tableName." WHERE Subject = :Subject AND CourseNumber = :CourseNumber AND Section NOT LIKE '%L'" );
+			} else {
+				$stmt = $dbh->prepare( "SELECT * FROM ".course::$tableName." WHERE Subject = :Subject AND CourseNumber = :CourseNumber" );
+			}
+			
 			$stmt->bindParam( ':Subject', $c["Subject"] );
 			$stmt->bindParam( ':CourseNumber', $c["CourseNumber"] );
+
 			$stmt->execute();
 			
 			while( $row = $stmt->fetch() ) 
