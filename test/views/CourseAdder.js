@@ -99,19 +99,13 @@ $("#addClass").click(function() {
 $("#submitClasses").click(function() {
 	hideAndResetErrors();
 
-	if (!areAllClassesFilledIn()) {
-		showErrors();
-		return;
-	}
+	areAllClassesFilledIn()
 
 	var daysInfo = [];
 	daysInfo = prepareDaysInfo();
 
 	scheduleIndex = 0
-	$("#results").parent().show()
-	$("#results").empty()
-	$("#results").html("Creating your perfect schedule...")
-	$('#calendar').fullCalendar('removeEvents')
+	$("#calendar").fullCalendar("removeEvents")
 
 
 	//Create array that will hold the courses that a user selected
@@ -127,15 +121,25 @@ $("#submitClasses").click(function() {
 	
 	var blockSchedule = $('input:radio[name=block]:checked').val();
 	//Send courses to handler
-	$.ajax( { 
-			'type' : 'POST',
-			'url' : 'handlers/getSchedule.php',
-			'data' : { 'courses' : courseArray, 'daysInfo' : daysInfo, 'blockSchedule' : blockSchedule } }
-			).done( function(result) {
-				$("#results").append(result)
-				schedules = $.parseJSON(result)
-				showResult(schedules[scheduleIndex]) //Initially scheduleIndex = 0
-			});
+	if (errors === undefined || errors.length == 0) {
+		$("#results").parent().show()
+		$("#results").empty()
+		$("#results").html("Creating your perfect schedule...")
+
+		$.ajax( { 
+				'type' : 'POST',
+				'url' : 'handlers/getSchedule.php',
+				'data' : { 'courses' : courseArray, 'daysInfo' : daysInfo, 'blockSchedule' : blockSchedule } }
+				).done( function(result) {
+					$("#results").append(result)
+					schedules = $.parseJSON(result)
+					showResult(schedules[scheduleIndex]) //Initially scheduleIndex = 0
+				});
+	} else {
+		$("#results").parent().hide()
+		$("#calendar").hide()
+		showErrors();
+	}
 });
 
 function hideAndResetErrors() {
@@ -191,6 +195,7 @@ function prepareDaysInfo() {
 			errors.push("Not proper format for start time for " + fullDaysName[i])
 		}
 		if (endTime == "Not proper format") {
+			console.log("Not proper format for start time for " + fullDaysName[i])
 			errors.push("Not proper format for end time for " + fullDaysName[i])
 		}
 
@@ -389,6 +394,7 @@ function scrollTo(id) {
 
 function showResult(result)
 {
+	$("#calendar").show()
 	$("#results").empty()
 
 	//return result
