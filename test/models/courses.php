@@ -355,6 +355,8 @@ class course
 		
 	}
 
+	# The following code is by barfoon from StackOverflow
+	# http://stackoverflow.com/a/8567479
 	#$arrays contains all possible courses a person can take.
 	#Each array in $arrays is organized by course
 	#For example $arrays[0] contains an array of all possible ENG 1301 courses
