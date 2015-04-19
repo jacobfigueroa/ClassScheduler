@@ -420,7 +420,7 @@ class course
 				{
 					if ($course1 !== $course2)
 					{
-						if($course1->Days === $course2->Days)
+						if($course1->Days === $course2->Days || strpos($course1->Days, $course2->Days) !== FALSE ||strpos($course2->Days, $course1->Days) !== FALSE)
 						{
 							if (strpos($course1->Section, 'L') === FALSE)
 							{
