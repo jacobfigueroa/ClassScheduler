@@ -17,8 +17,13 @@ for($i = 0; $i < count($days); $i++) {
 	}
 }
 
-$array = course::makeArray($sections);
-$schedule = course::createAllPossibleSchedules($array);
-$schedule = course::removeOverlappingCourses($schedule);
-echo json_encode($schedule);
+if(sizeof($sections) > 0){
+	$array = course::makeArray($sections);
+	$schedule = course::createAllPossibleSchedules($array);
+	$schedule = course::removeOverlappingCourses($schedule);
+	echo json_encode($schedule);
+}
+else{
+	echo "No courses meet your preferences";
+}
 ?>

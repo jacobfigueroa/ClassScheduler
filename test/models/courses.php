@@ -301,7 +301,7 @@ class course
 		return $result;
 	}
 	
-	function timeOverlap($first, $second)
+	static function timeOverlap($first, $second)
 	{
 	//checks to see if the times for two classes overlap
 		if(!($first->Start >= $second->Start && $first->Start <= $second->End) && !($first->End >= $second->Start && $first->End <= $second->End))
@@ -420,11 +420,12 @@ class course
 				{
 					if ($course1 !== $course2)
 					{
-						if($course1->Days === $course2->Days || strpos($course1->Days, $course2->Days) !== FALSE ||strpos($course2->Days, $course1->Days) !== FALSE)
+						#if($course1->Days === $course2->Days || strpos($course1->Days, $course2->Days) !== FALSE ||strpos($course2->Days, $course1->Days) !== FALSE)
+						if(course::daysOverLap($course1, $course2))
 						{
 							if (strpos($course1->Section, 'L') === FALSE)
 							{
-								if(!$course1->timeOverlap($course1,$course2))
+								if(!course::timeoverlap($course1,$course))
 								{
 									$courseOverlap = true;
 								}	
@@ -439,6 +440,19 @@ class course
 
 		}
 		return $result;
+	}
+
+	static function daysOverLap($course1, $course2)
+	{
+		if ($course1->Days === "" || $course2->Days === "")
+			return FALSE;
+		if ($course1->Days === $course2->Days)
+			return TRUE;
+		if(strpos($course1->Days, $course2->Days) !== FALSE)
+			return TRUE;
+		if(strpos($course2->Days, $course1->Days) !== FALSE)
+			return TRUE;
+		return FALSE;	
 	}
 }
 ?>
