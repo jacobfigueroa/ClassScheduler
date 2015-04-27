@@ -467,6 +467,17 @@ class course
 
 	static function isBlockSchedule($schedule)
 	{
+		/*
+		//Sort the schedule by start time
+		usort($schedule, "course::sortByTime");
+
+		$days = "MTWRF";
+
+		foreach($days as $day) {
+			echo $day;
+		}*/
+
+
 		//Check to see if its a block schedule
 		//If it is //(Right now it always returns trues)
 		return TRUE;
@@ -477,6 +488,14 @@ class course
 	static function getErrors()
 	{
 		return course::$errors;
+	}
+
+	static function sortByTime($a, $b)
+	{
+		if ($a == $b) {
+        	return 0;
+    	}
+    	return ($a->Start < $b->Start) ? -1 : 1;
 	}
 }
 ?>
