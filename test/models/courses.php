@@ -420,7 +420,7 @@ class course
 				{
 					if ($course1 !== $course2)
 					{
-						#if($course1->Days === $course2->Days || strpos($course1->Days, $course2->Days) !== FALSE ||strpos($course2->Days, $course1->Days) !== FALSE)
+						//if($course1->Days === $course2->Days || strpos($course1->Days, $course2->Days) !== FALSE ||strpos($course2->Days, $course1->Days) !== FALSE)
 						if(course::daysOverLap($course1, $course2))
 						{
 							if (strpos($course1->Section, 'L') === FALSE)
@@ -448,6 +448,19 @@ class course
 			return FALSE;
 		if ($course1->Days === $course2->Days)
 			return TRUE;
+
+		// //New method
+		// $course1Days = explode(" ", $course1->Days);
+
+		// //Check if any character in $course1->Days exists in $course2->Days
+		// foreach($course1Days as $course1Day) {
+		// 	if (strpos($course2->Days, $course1Day) !== FALSE) {
+		// 		return TRUE;
+		// 	}
+		// }
+
+
+		//old method
 		if(strpos($course1->Days, $course2->Days) !== FALSE)
 			return TRUE;
 		if(strpos($course2->Days, $course1->Days) !== FALSE)
@@ -459,30 +472,59 @@ class course
 	{
 		foreach($schedules as $s)
 		{
-			if(course::isBlockSchedule($s)) // Right now it always returns true, so the schedule is unchanged
+			if(course::isBlockSchedule($s)) {
 				$result[] = $s;
+			}
+			//echo "<br><br><br>";
 		}
 		return $result;
 	}
 
 	static function isBlockSchedule($schedule)
 	{
-		/*
 		//Sort the schedule by start time
+
 		usort($schedule, "course::sortByTime");
 
-		$days = "MTWRF";
+		// foreach($schedule as $c) {
+		// 	echo $c->Subject . " " . $c->CourseNumber . " " . $c->Start . "<br>";
+		// }
 
+
+		$days = ["M","T","W","R","F"];
+
+		// Go through each day
 		foreach($days as $day) {
-			echo $day;
-		}*/
+			//echo "<br>" . $day . "<br>";
 
+			$tempArray = []; //Used to hold courses that are in $day
 
-		//Check to see if its a block schedule
-		//If it is //(Right now it always returns trues)
+			foreach($schedule as $c) {	
+				if( strpos($c->Days, $day) !== FALSE ) {
+					$tempArray[] = $c;
+					//echo $c->Subject . " " . $c->CourseNumber . " " . $c->Start . "<br>";
+				}
+			}
+
+			for($i = 0; $i < sizeof($tempArray)-1; $i++) {
+				if($day === "T" || $day === "R") { //Check for lunch break. 12:00 pm - 1:00 PM
+					if( $tempArray[$i]->End === 1150 && $tempArray[$i+1]->Start === 1310) {
+						// Lunch break, ignore
+						continue;
+					}
+				}
+				if( ($tempArray[$i+1]->Start - $tempArray[$i]->End) - 40 > 45 ) { //Theres a gap bigger than 45 minutes, so its not a block schedule
+					return FALSE;
+				}
+			}
+		}
 		return TRUE;
-		//else
-		return FALSE;
+
+		// //Check to see if its a block schedule
+		// //If it is //(Right now it always returns trues)
+		// return TRUE;
+		// //else
+		// return FALSE;
 	}
 
 	static function getErrors()
@@ -496,6 +538,7 @@ class course
         	return 0;
     	}
     	return ($a->Start < $b->Start) ? -1 : 1;
+    	//return ($a->Start < $b->Start) ? 1 : -1;
 	}
 }
 ?>

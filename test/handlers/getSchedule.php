@@ -24,7 +24,8 @@ if(sizeof($sections) > 0) {
 	$schedule = course::createAllPossibleSchedules($array);
 	$schedule = course::removeOverlappingCourses($schedule);
 
-	if ($blockSchedule == "true") {
+	
+	if ($blockSchedule == "yes") {
 		$schedule = course::removeNonBlockSchedules($schedule);
 	}
 
