@@ -3,7 +3,7 @@ class course
 {
 	# class reflects a db table
 	public static $tableName = "TABLE1";
-	public static $error = [];
+	public static $errors = [];
 
 	# data columns
 	public $CourseName;
@@ -472,6 +472,11 @@ class course
 		return TRUE;
 		//else
 		return FALSE;
+	}
+
+	static function getErrors()
+	{
+		return course::$errors;
 	}
 }
 ?>

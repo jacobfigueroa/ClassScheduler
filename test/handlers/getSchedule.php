@@ -32,5 +32,22 @@ if(sizeof($sections) > 0) {
 	$errors[] = "No courses meet your preferences";
 }
 
+//Check to see if a course is missing
+if (sizeof($schedule) > 0) {
+	foreach ($courses as $c) {
+		$courseFound = FALSE;
+		foreach ($schedule[0] as $courseInSchedule) {
+			if( $c["Subject"] === $courseInSchedule->Subject && $c["CourseNumber"] === $courseInSchedule->CourseNumber ) {
+				$courseFound = TRUE;
+			}
+		}
+		if (!$courseFound) {
+			$errors[] = "A schedule with " . $c["Subject"] . " " . $c["CourseNumber"] . " was not able to be generated. Please adjust your preferences.";
+		}
+	}
+}
+
+$errors = array_merge($errors, course::getErrors());
+
 echo json_encode(array('schedules' => $schedule, 'errors' => $errors ));
 ?>
