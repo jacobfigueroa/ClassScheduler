@@ -3,42 +3,51 @@ require_once( "../models/DB.php" );
 require_once( "../models/courses.php" );
 
 $courses = $_POST['courses'];
-$startTime = (int)$_POST['startTime'];
-$endTime = (int)$_POST['endTime'];
+$timeInfo = $_POST['daysInfo'];
 $daysOff = $_POST['daysOff'];
+$blockSchedule = $_POST['blockSchedule'];
+$errors = [];
 
-$schedule = course::generateSchedule($courses,$dbh);
-//$sections = course::chooseASection($schedule);
-//$sections = course::returnOnlineClasses($schedule);
-//$sections = course::removeFridayCourses($schedule);
+$sections = course::getAllSections($courses,$dbh);
 
+$days = ["M","T","W","R","F"];
+for($i = 0; $i < count($days); $i++) {
+	if($timeInfo[$i]["day"]["dayOff"] == "true") {
+		$sections = course::removeCoursesByDay($sections,$days[$i]);
+	} else if ( (int)$timeInfo[$i]["day"]["startTime"] !== 0 || (int)$timeInfo[$i]["day"]["endTime"] !== 2359 ) {
+		$sections = course::removeCoursesByDayAndTime($sections, $days[$i], $timeInfo[$i]["day"]["startTime"], $timeInfo[$i]["day"]["endTime"]);
+	}
+}
 
+if(sizeof($sections) > 0) {
+	$array = course::makeArray($sections);
+	$schedule = course::createAllPossibleSchedules($array);
+	$schedule = course::removeOverlappingCourses($schedule);
 
-$sections = $schedule;
-//Lame way of doing it. But idc
-if($daysOff["Monday"] === "true")
-	$sections = course::removeCoursesByDay($sections,"M");
-if($daysOff["Tuesday"] === "true")
-	$sections = course::removeCoursesByDay($sections,"T");
-if($daysOff["Wednesday"] === "true")
-	$sections = course::removeCoursesByDay($sections,"W");
-if($daysOff["Thursday"] === "true")
-	$sections = course::removeCoursesByDay($sections,"R");
-if($daysOff["Friday"] === "true")
-	$sections = course::removeCoursesByDay($sections,"F");
+	if ($blockSchedule == "true") {
+		$schedule = course::removeNonBlockSchedules($schedule);
+	}
 
+} else {
+	$errors[] = "No courses meet your preferences";
+}
 
-	
-//if($startTime != null && $endTime != null)
-$sections = course::removeCoursesByTime($sections, $startTime, $endTime);
-$array = course::makeArray($sections);
-//$sections = course::createValidSchedule($sections);
+//Check to see if a course is missing
+if (sizeof($schedule) > 0) {
+	foreach ($courses as $c) {
+		$courseFound = FALSE;
+		foreach ($schedule[0] as $courseInSchedule) {
+			if( $c["Subject"] === $courseInSchedule->Subject && $c["CourseNumber"] === $courseInSchedule->CourseNumber ) {
+				$courseFound = TRUE;
+			}
+		}
+		if (!$courseFound) {
+			$errors[] = "A schedule with " . $c["Subject"] . " " . $c["CourseNumber"] . " was not able to be generated. Please adjust your preferences.";
+		}
+	}
+}
 
-$schedule = course::createAllPossibleSchedules($array);
-$schedule = course::removeOverlappingCourses($schedule);
+$errors = array_merge($errors, course::getErrors());
 
-//Later change it to:
-//echo json_encode($sections);
-//echo json_encode($array);
-echo json_encode($schedule);
+echo json_encode(array('schedules' => $schedule, 'errors' => $errors ));
 ?>

@@ -3,6 +3,7 @@ class course
 {
 	# class reflects a db table
 	public static $tableName = "TABLE1";
+	public static $errors = [];
 
 	# data columns
 	public $CourseName;
@@ -98,14 +99,24 @@ class course
 	}
 	
 	
-	static function generateSchedule($courses, $dbh)
+	static function getAllSections($courses, $dbh)
 	{
 		//grabs all sections of the chosen classes
 		foreach ($courses as $c)
 		{
-			$stmt = $dbh->prepare( "SELECT * FROM ".course::$tableName." WHERE Subject = :Subject AND CourseNumber = :CourseNumber" );
-			$stmt->bindParam( ':Subject', $c[0] );
-			$stmt->bindParam( ':CourseNumber', $c[1] );
+			$stmt = "";
+			
+			if ($c["Online"] === "yes") {
+				$stmt = $dbh->prepare( "SELECT * FROM ".course::$tableName." WHERE Subject = :Subject AND CourseNumber = :CourseNumber AND Section LIKE '%L'" );
+			} else if ($c["Online"] === "no") {
+				$stmt = $dbh->prepare( "SELECT * FROM ".course::$tableName." WHERE Subject = :Subject AND CourseNumber = :CourseNumber AND Section NOT LIKE '%L'" );
+			} else {
+				$stmt = $dbh->prepare( "SELECT * FROM ".course::$tableName." WHERE Subject = :Subject AND CourseNumber = :CourseNumber" );
+			}
+			
+			$stmt->bindParam( ':Subject', $c["Subject"] );
+			$stmt->bindParam( ':CourseNumber', $c["CourseNumber"] );
+
 			$stmt->execute();
 			
 			while( $row = $stmt->fetch() ) 
@@ -180,11 +191,26 @@ class course
 		return $result;
 	}
 	
-	static function removeCoursesByDay($schedule, $day)
+	static function returnDay($day)
+	{
+		if($day == 1)
+			$dayOff = 'M';
+		if($day == 2)
+			$dayOff = 'T';
+		if($day == 3)
+			$dayOff = 'W';
+		if($day == 4)
+			$dayOff = 'R';
+		else
+			$dayOff = 'F';
+		return $dayOff;
+	
+	}
+	
+	static function removeCoursesByDay($schedule, $dayOff)
 	{
 		//searches through all classes in schedule to remove specific days, can be easily modded to remove any day
 		$course = new course();
-		$dayOff = $day;
 		foreach($schedule as $s)
 		{
 			if (strpos($s->Days, $dayOff) === FALSE)
@@ -211,6 +237,32 @@ class course
 			}
 		}
 		return $result;
+	}
+	
+	static function removeCoursesByDayAndTime($schedule, $day, $start, $end)
+	{
+		//searches through all classes in schedule to remove specific classes by start and end time on specific day
+		//if classes fall outside boundaries of preference, they are removed
+		$course = new course();
+
+		foreach($schedule as $s)
+		{
+			if (strpos($s->Days, $day) !== FALSE)
+			{
+				if ((int)$s->Start >= (int)$start && (int)$s->End <= (int)$end)
+				{
+					$course = $s;
+					$result[] = $course;
+				}
+			}
+			else
+			{
+				$course = $s;
+				$result[] = $course;
+			}
+		}
+		return $result;
+		
 	}
 	
 	static function createValidSchedule($schedule)
@@ -249,7 +301,7 @@ class course
 		return $result;
 	}
 	
-	function timeOverlap($first, $second)
+	static function timeOverlap($first, $second)
 	{
 	//checks to see if the times for two classes overlap
 		if(!($first->Start >= $second->Start && $first->Start <= $second->End) && !($first->End >= $second->Start && $first->End <= $second->End))
@@ -303,20 +355,8 @@ class course
 		
 	}
 
-/*
-	static function createAllPossibleSchedules($courses)
-	{
-		for($i = 0; $i < $courses[0].length(); $i++)
-		{
-			$schedule[] = $course[0][$i] + returnPossibleSchedules($course[$i])
-		}
-	}
-
-	static function returnPossibleSchedules($courses)
-	{
-
-	}
-*/
+	# The following code is by barfoon from StackOverflow
+	# http://stackoverflow.com/a/8567479
 	#$arrays contains all possible courses a person can take.
 	#Each array in $arrays is organized by course
 	#For example $arrays[0] contains an array of all possible ENG 1301 courses
@@ -380,12 +420,16 @@ class course
 				{
 					if ($course1 !== $course2)
 					{
-						if($course1->Days === $course2->Days)
+						#if($course1->Days === $course2->Days || strpos($course1->Days, $course2->Days) !== FALSE ||strpos($course2->Days, $course1->Days) !== FALSE)
+						if(course::daysOverLap($course1, $course2))
 						{
-							if(!$course1->timeOverlap($course1,$course2))
+							if (strpos($course1->Section, 'L') === FALSE)
 							{
-								$courseOverlap = true;
-							}
+								if(!course::timeoverlap($course1,$course))
+								{
+									$courseOverlap = true;
+								}	
+							}	
 						}
 					}
 				}
@@ -396,6 +440,62 @@ class course
 
 		}
 		return $result;
+	}
+
+	static function daysOverLap($course1, $course2)
+	{
+		if ($course1->Days === "" || $course2->Days === "")
+			return FALSE;
+		if ($course1->Days === $course2->Days)
+			return TRUE;
+		if(strpos($course1->Days, $course2->Days) !== FALSE)
+			return TRUE;
+		if(strpos($course2->Days, $course1->Days) !== FALSE)
+			return TRUE;
+		return FALSE;	
+	}
+
+	static function removeNonBlockSchedules($schedules)
+	{
+		foreach($schedules as $s)
+		{
+			if(course::isBlockSchedule($s)) // Right now it always returns true, so the schedule is unchanged
+				$result[] = $s;
+		}
+		return $result;
+	}
+
+	static function isBlockSchedule($schedule)
+	{
+		/*
+		//Sort the schedule by start time
+		usort($schedule, "course::sortByTime");
+
+		$days = "MTWRF";
+
+		foreach($days as $day) {
+			echo $day;
+		}*/
+
+
+		//Check to see if its a block schedule
+		//If it is //(Right now it always returns trues)
+		return TRUE;
+		//else
+		return FALSE;
+	}
+
+	static function getErrors()
+	{
+		return course::$errors;
+	}
+
+	static function sortByTime($a, $b)
+	{
+		if ($a == $b) {
+        	return 0;
+    	}
+    	return ($a->Start < $b->Start) ? -1 : 1;
 	}
 }
 ?>

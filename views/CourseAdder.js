@@ -1,14 +1,16 @@
 var courseCount = 0
 var schedules
 var scheduleIndex = 0;
+var errors = [];
+
 $("#results").parent().hide()
+$("#errors").hide()
 
 $("#courseSelector").on("change","select", function(){
 	if( $(this).attr("class") == "subjectListSelect" ) {
 		var subject = $(this).val()
 		var id = $(this).attr("id")
 		var idNumber = id.substr(id.length-1,id.length-1) //start,end. Returns last character
-		//console.log(idNumber)
 
 		//Send subject selected, return list of courses associated with that subject
 		$.ajax( { 
@@ -36,22 +38,39 @@ $("#courseSelector").on("change","select", function(){
 				$(courseList).append(classList);
 				$(courseList).append("<br>");
 
-
-				//Create a checkbox so that a user may designate if a course is required 
-				var requiredCheckBox = $("<input>")
-				requiredCheckBox.attr("type","checkbox")
-				requiredCheckBox.attr("id","requiredCheckBox"+courseCount)
-				$(courseList).append("Required?  ");
-				$(courseList).append(requiredCheckBox);
-
-				$(courseList).append("<br>");
-
 				//Create a checkbox so that a user may designate if they want an online course
+				/*
 				var onlineCheckBox = $("<input>")
 				onlineCheckBox.attr("type","checkbox")
 				onlineCheckBox.attr("id","onlineCheckBox"+courseCount)
 				$(courseList).append("Online?  ");
 				$(courseList).append(onlineCheckBox);
+				*/
+
+				$(courseList).append("Online?  ");
+
+				var onlineRadioButton = $("<input>")
+				onlineRadioButton.attr("type","radio")
+				onlineRadioButton.attr("name", "onlineRadioButton"+courseCount)
+				onlineRadioButton.attr("value","yes")
+				$(courseList).append(onlineRadioButton);
+				$(courseList).append(" Yes ");
+
+				onlineRadioButton = $("<input>")
+				onlineRadioButton.attr("type","radio")
+				onlineRadioButton.attr("name", "onlineRadioButton"+courseCount)
+				onlineRadioButton.attr("value","no")
+				$(courseList).append(onlineRadioButton);
+				$(courseList).append(" No ");
+
+
+				onlineRadioButton = $("<input>")
+				onlineRadioButton.attr("type","radio")
+				onlineRadioButton.attr("name", "onlineRadioButton"+courseCount)
+				onlineRadioButton.attr("value","indifferent")
+				onlineRadioButton.attr("checked","checked")
+				$(courseList).append(onlineRadioButton);
+				$(courseList).append(" Indifferent");
 			});
 	}
 });
@@ -78,84 +97,131 @@ $("#addClass").click(function() {
 });
 
 $("#submitClasses").click(function() {
-	scheduleIndex = 0
-	$("#results").parent().show()
-	$("#results").empty()
-	$("#results").html("Creating your perfect schedule...")
-	$('#calendar').fullCalendar('removeEvents')
+	hideAndResetErrors();
 
+	areAllClassesFilledIn()
 
-	///////////////////////////////
-	//THIS WILL BE THE NEW FORMAT//
-	/*
-	var days = ["M", "T", "W", "R", "F"];
 	var daysInfo = [];
-	for(var i = 0; i < days.length; i++)
-	{
-		var day = days[i]
-		var startTime = convertTimeToMilitaryTime( $("#"+day).children(".startTime").val() )
-		var endTime = convertTimeToMilitaryTime( $("#"+day).children(".endTime").val() )
-		var daysOff = $("#"+day).children(".dayOffCheckBox").prop("checked")
+	daysInfo = prepareDaysInfo();
 
-		var dayInfo = { day : { "startTime" : startTime, 
-								"endTime" : endTime,
-								"dayOff" : daysOff } }
-
-		daysInfo.push(dayInfo)
-	}
-	console.log(daysInfo)
-	*/
-	///////////////////////////////
-	///////////////////////////////
-
-
-	var startTime = $("#startTime").val()
-	var endTime = $("#endTime").val()
-
-	
-	if(startTime == "")
-		startTime = "12:00 AM"
-	if(endTime == "")
-		endTime = "11:59 PM"
-	
-	// Convert times to military times since thats what the DB uses
-	startTime = convertTimeToMilitaryTime(startTime)
-	endTime = convertTimeToMilitaryTime(endTime)
-
-	//Create array that stores what days off the users wants
-	var daysOff = { "Monday" : $("#mondayCheckBox").prop("checked"), "Tuesday" : $("#tuesdayCheckBox").prop("checked"), 
-				"Wednesday" : $("#wednesdayCheckBox").prop("checked"), "Thursday" : $("#thursdayCheckBox").prop("checked"),
-				"Friday" : $("#fridayCheckBox").prop("checked") }
+	scheduleIndex = 0
+	$("#calendar").fullCalendar("removeEvents")
 
 
 	//Create array that will hold the courses that a user selected
 	var courseArray = []
 	for (var i = 0; i <= courseCount; i++) {
-		var subjectListSelect = "#subjectListSelect" + i
-		var classListSelect = "#classListSelect" + i
-		var requiredCheckBox = "#requiredCheckBox" + i
-		var onlineCheckBox = "#onlineCheckBox" + i
-		//$("#results").append("<p>" + $(subjectListSelect).val() + " " + $(classListSelect).val() + "</p>")
-		courseArray[i] = [ $(subjectListSelect).val(), $(classListSelect).val(), 
-				$(requiredCheckBox).prop('checked'), $(onlineCheckBox).prop('checked')]
+		var subjectListSelectId = "#subjectListSelect" + i
+		var classListSelectId = "#classListSelect" + i
+		var onlineRadioButtonSelector = "input:radio[name=onlineRadioButton"+i+"]:checked"
+		courseArray[i] = { "Subject" : $(subjectListSelectId).val(),
+							"CourseNumber" : $(classListSelectId).val(),
+							"Online" : $(onlineRadioButtonSelector).val() }
 	}
-
-	//console.log(courseArray)
-	//console.log(startTime)
 	
+	var blockSchedule = $('input:radio[name=block]:checked').val();
 	//Send courses to handler
-	$.ajax( { 
-			'type' : 'POST',
-			'url' : 'handlers/getSchedule.php',
-			'data' : { 'courses' : courseArray, 'startTime' : startTime, 'endTime' : endTime, 'daysOff' : daysOff} }
-			).done( function(result) {
-				$("#results").append(result)
-				schedules = $.parseJSON(result)
-				showResult(schedules[scheduleIndex]) //Initially scheduleIndex = 0
-			});
+	if (errors === undefined || errors.length == 0) {
+		$("#results").parent().show()
+		$("#results").empty()
+		$("#results").html("Creating your perfect schedule...")
+
+		$.ajax( { 
+				'type' : 'POST',
+				'url' : 'handlers/getSchedule.php',
+				'data' : { 'courses' : courseArray, 'daysInfo' : daysInfo, 'blockSchedule' : blockSchedule } }
+				).done( function(result) {
+					$("#results").append(result) // REMOVE THIS
+					
+					result = $.parseJSON(result)
+
+					if(result["errors"].length > 0) { // If errors show the errors
+						errors = result["errors"]
+						showErrors()
+						$("#results").parent().hide()
+					} else { // Else show schedules
+						schedules = result["schedules"]
+						showResult(schedules[scheduleIndex]) //Initially scheduleIndex = 0
+					}
+					// $("#results").append(result)
+					// schedules = $.parseJSON(result)
+					// showResult(schedules[scheduleIndex]) //Initially scheduleIndex = 0
+				});
+	} else {
+		$("#results").parent().hide()
+		$("#calendar").hide()
+		showErrors();
+	}
 });
 
+function hideAndResetErrors() {
+	$("#errors").hide();
+	errors = []
+}
 
+function showErrors() {
+	$("#errors").empty();
+	$("#errors").show();
+	for (var i = 0; i < errors.length; i++) {
+		console.log(errors[i])
+		$("#errors").append(errors[i] + "<br>");
+	}
+}
+
+function areAllClassesFilledIn() {
+	var allClassesFilledIn = true;
+	for (var i = 0; i <= courseCount; i++) {
+		var subjectListSelect = "#subjectListSelect" + i
+		if($(subjectListSelect).val() == "NULL") {
+			allClassesFilledIn = false;
+			errors.push("Course " + (i+1) + " was left blank. Please fill in all course info.");
+		}
+	}
+	return allClassesFilledIn;
+}
+
+function prepareDaysInfo() {
+		///////////////////////////////
+	//THIS WILL BE THE NEW FORMAT//
+	var days = ["M", "T", "W", "R", "F"];
+	var fullDaysName = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+	var daysInfo = [];
+	for(var i = 0; i < days.length; i++)
+	{
+		var day = days[i]
+		var startTime = $("#"+day).children(".startTime").val()
+		var endTime = $("#"+day).children(".endTime").val()
+		var dayOff = $("#"+day).children(".dayOffCheckBox").prop("checked")
+
+
+		if(startTime == "")
+			startTime = "12:00 AM"
+		if(endTime == "")
+			endTime = "11:59 PM"
+
+		startTime = convertTimeToMilitaryTime( startTime )
+		endTime = convertTimeToMilitaryTime( endTime )
+
+		if(startTime == "Not proper format" ) {
+			console.log("Not proper format for start time for " + fullDaysName[i])
+			errors.push("Not proper format for start time for " + fullDaysName[i])
+		}
+		if (endTime == "Not proper format") {
+			console.log("Not proper format for start time for " + fullDaysName[i])
+			errors.push("Not proper format for end time for " + fullDaysName[i])
+		}
+
+		var dayInfo = { day : { "startTime" : startTime, 
+								"endTime" : endTime,
+								"dayOff" : dayOff } }
+
+		daysInfo.push(dayInfo)
+	}
+	console.log(daysInfo)
+	return daysInfo;
+	///////////////////////////////
+	///////////////////////////////
+}
 // Example: 11:54 AM to 1154. 2:35 PM to 1435.
 function convertTimeToMilitaryTime (time) {
 	var locationOfColon = 0
@@ -236,8 +302,6 @@ function createCalendar (schedule) {
 
 	$('#calendar').fullCalendar('removeEvents')
 
-	//var earlestStartTime = getEarliestStartTimeOfClasses(schedule)
-	//earlestStartTime = convertMilitaryTimeToFullCalendarFormat(earlestStartTime)
 	$('#calendar').fullCalendar({
 		header: false,
 		defaultView: 'agendaWeek',
@@ -246,8 +310,6 @@ function createCalendar (schedule) {
 		editable: false,
 		eventLimit: true, // allow "more" link when too many events
 		minTime: "07:00:00",
-		//maxTime: "22:00:00",
-		//minTime: earlestStartTime,
 		columnFormat: "ddd"
 	});
 
@@ -318,10 +380,8 @@ function splitDays(course)
 	//Will have to make a seperate entry in calendar for each day of class.
 	//For example a MWF class will need an entry on Monday, Wednesday and Friday.
 	//So the below code will take care of that.
-	//for (var i = 0; i < schedule.length; i++) {
-		var days = course["Days"].split(" ")
-		return days
-	//}
+	var days = course["Days"].split(" ")
+	return days
 }
 
 function convertMilitaryTimeToFullCalendarFormat(militaryTime){
@@ -346,8 +406,8 @@ function scrollTo(id) {
 
 function showResult(result)
 {
+	$("#calendar").show()
 	$("#results").empty()
-	//$("#results").append(result);
 
 	//return result
 	var serverMessage = $("<h3>")

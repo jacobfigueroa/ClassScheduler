@@ -18,7 +18,6 @@
 	<body>
 
 	  	<h1><center>Perfect Class Scheduler!</center></h1>
-		
 		<div class = "well">
 		<h3>Input your classes:</h3>
 		<div id = "courseSelector">
@@ -46,39 +45,6 @@
 		<div class="well">
 		<h3>Input your preferences:</h3>
 			<div id = "preferences">
-				<div class="input-group">
-					Start time
-					<br>
-					<input type="text" id = "startTime" size="25" placeholder="e.g. 10:45 AM">
-				</div>
-
-				<br>
-
-				<div class="input-group">
-					End time
-					<br>
-					<input type="text" id = "endTime" size="25" placeholder="e.g. 3:50 PM">
-				</div>
-
-				<br>
-
-				<br>
-
-				What days would you like off?
-
-				<br>
-
-				Monday: <input type="checkbox" id="mondayCheckBox">  |  
-				Tuesday: <input type="checkbox" id="tuesdayCheckBox">  |  
-				Wednesday: <input type="checkbox" id="wednesdayCheckBox">  |  
-				Thursday: <input type="checkbox" id="thursdayCheckBox">  |  
-				Friday: <input type="checkbox" id="fridayCheckBox">
-
-				<br>
-				
-				<!--
-				<br>In Progress<br>
-
 				<div class ="input-group days">
 
 					<div id = "preferencesList">
@@ -142,8 +108,14 @@
 
 				</div>
 
-				<br>In Progress<br>
-				-->
+				<br>
+
+				<form>
+					Block Schedule:
+					<input type="radio" name="block" value="yes"> Yes
+					<input type="radio" name="block" value="no" checked="checked"> No
+				</form>
+
 			</div>
 
 			<br>
@@ -153,6 +125,10 @@
 			</div>
 
 		</div>
+
+		<br>
+
+		<div class = "well" id = "errors"></div>
 
 		<br>
 
