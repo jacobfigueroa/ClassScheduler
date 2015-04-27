@@ -5,6 +5,8 @@ require_once( "../models/courses.php" );
 $courses = $_POST['courses'];
 $timeInfo = $_POST['daysInfo'];
 $daysOff = $_POST['daysOff'];
+$blockSchedule = $_POST['blockSchedule'];
+$errors = [];
 
 $sections = course::getAllSections($courses,$dbh);
 
@@ -17,13 +19,18 @@ for($i = 0; $i < count($days); $i++) {
 	}
 }
 
-if(sizeof($sections) > 0){
+if(sizeof($sections) > 0) {
 	$array = course::makeArray($sections);
 	$schedule = course::createAllPossibleSchedules($array);
 	$schedule = course::removeOverlappingCourses($schedule);
-	echo json_encode($schedule);
+
+	if ($blockSchedule == "true") {
+		$schedule = course::removeNonBlockSchedules($schedule);
+	}
+
+} else {
+	$errors[] = "No courses meet your preferences";
 }
-else{
-	echo "No courses meet your preferences";
-}
+
+echo json_encode(array('schedules' => $schedule, 'errors' => $errors ));
 ?>

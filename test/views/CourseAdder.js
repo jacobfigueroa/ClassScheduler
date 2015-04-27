@@ -131,9 +131,21 @@ $("#submitClasses").click(function() {
 				'url' : 'handlers/getSchedule.php',
 				'data' : { 'courses' : courseArray, 'daysInfo' : daysInfo, 'blockSchedule' : blockSchedule } }
 				).done( function(result) {
-					$("#results").append(result)
-					schedules = $.parseJSON(result)
-					showResult(schedules[scheduleIndex]) //Initially scheduleIndex = 0
+					$("#results").append(result) // REMOVE THIS
+					
+					result = $.parseJSON(result)
+
+					if(result["errors"].length > 0) { // If errors show the errors
+						errors = result["errors"]
+						showErrors()
+						$("#results").parent().hide()
+					} else { // Else show schedules
+						schedules = result["schedules"]
+						showResult(schedules[scheduleIndex]) //Initially scheduleIndex = 0
+					}
+					// $("#results").append(result)
+					// schedules = $.parseJSON(result)
+					// showResult(schedules[scheduleIndex]) //Initially scheduleIndex = 0
 				});
 	} else {
 		$("#results").parent().hide()

@@ -454,5 +454,24 @@ class course
 			return TRUE;
 		return FALSE;	
 	}
+
+	static function removeNonBlockSchedules($schedules)
+	{
+		foreach($schedules as $s)
+		{
+			if(course::isBlockSchedule($s)) // Right now it always returns true, so the schedule is unchanged
+				$result[] = $s;
+		}
+		return $result;
+	}
+
+	static function isBlockSchedule($schedule)
+	{
+		//Check to see if its a block schedule
+		//If it is //(Right now it always returns trues)
+		return TRUE;
+		//else
+		return FALSE;
+	}
 }
 ?>
