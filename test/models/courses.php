@@ -287,7 +287,7 @@ class course
 					for($i = 0; $i < $counter; $i++)
 					{
 					//calls the timeoverlap function to check for overlapping
-						if($s->timeOverlap($s, $result[$i]))
+						if(course::timeOverlap($s, $result[$i]))
 						{
 							$course = $s;
 							$result[] = $course;
@@ -315,8 +315,10 @@ class course
 			return true;
 		}
 		else
+		{
 		//else they do
 			return false;
+		}
 	}
 	
 	static function makeArray($schedule)
@@ -425,7 +427,7 @@ class course
 						{
 							if (strpos($course1->Section, 'L') === FALSE)
 							{
-								if(!course::timeoverlap($course1,$course))
+								if(!course::timeOverlap($course1,$course2))
 								{
 									$courseOverlap = true;
 								}	
