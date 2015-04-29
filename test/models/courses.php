@@ -125,6 +125,13 @@ class course
 				$course->copyFromRow($row);
 				$result[] = $course;
 			}
+
+			if ($c["Online"] === "yes") {
+				if(sizeof($result) === 0) {
+					course::$errors[] = "No online courses available for " . $c["Subject"] . " " . $c["CourseNumber"];
+				}
+
+			}
 		}
 		return $result;
 	}
