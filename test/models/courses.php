@@ -507,7 +507,6 @@ class course
 
 			for($i = 0; $i < sizeof($tempArray)-1; $i++) {
 				if($day === "T" || $day === "R") { //Check for lunch break. 12:00 pm - 1:00 PM
-					if( $tempArray[$i]->End === 1150 && $tempArray[$i+1]->Start === 1310) {
 						// Lunch break, ignore
 						continue;
 					}
