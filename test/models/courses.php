@@ -107,9 +107,9 @@ class course
 			$stmt = "";
 			
 			if ($c["Online"] === "yes") {
-				$stmt = $dbh->prepare( "SELECT * FROM ".course::$tableName." WHERE Subject = :Subject AND CourseNumber = :CourseNumber AND Section LIKE '%L'" );
+				$stmt = $dbh->prepare( "SELECT * FROM ".course::$tableName." WHERE Subject = :Subject AND CourseNumber = :CourseNumber AND Days = '' AND Start = '0' AND End = '0'" );
 			} else if ($c["Online"] === "no") {
-				$stmt = $dbh->prepare( "SELECT * FROM ".course::$tableName." WHERE Subject = :Subject AND CourseNumber = :CourseNumber AND Section NOT LIKE '%L'" );
+				$stmt = $dbh->prepare( "SELECT * FROM ".course::$tableName." WHERE Subject = :Subject AND CourseNumber = :CourseNumber AND Days != '' AND Start != '0' AND End != '0'" );
 			} else {
 				$stmt = $dbh->prepare( "SELECT * FROM ".course::$tableName." WHERE Subject = :Subject AND CourseNumber = :CourseNumber" );
 			}
@@ -507,6 +507,7 @@ class course
 
 			for($i = 0; $i < sizeof($tempArray)-1; $i++) {
 				if($day === "T" || $day === "R") { //Check for lunch break. 12:00 pm - 1:00 PM
+					if( $tempArray[$i]->End == 1150 && $tempArray[$i+1]->Start == 1310 || $tempArray[$i]->End == 1150 && $tempArray[$i+1]->Start == 1300) {
 						// Lunch break, ignore
 						continue;
 					}
