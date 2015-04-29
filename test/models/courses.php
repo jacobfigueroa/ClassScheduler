@@ -130,7 +130,6 @@ class course
 				if(sizeof($result) === 0) {
 					course::$errors[] = "No online courses available for " . $c["Subject"] . " " . $c["CourseNumber"];
 				}
-
 			}
 		}
 		return $result;
@@ -196,22 +195,6 @@ class course
 		}
 		
 		return $result;
-	}
-	
-	static function returnDay($day)
-	{
-		if($day == 1)
-			$dayOff = 'M';
-		if($day == 2)
-			$dayOff = 'T';
-		if($day == 3)
-			$dayOff = 'W';
-		if($day == 4)
-			$dayOff = 'R';
-		else
-			$dayOff = 'F';
-		return $dayOff;
-	
 	}
 	
 	static function removeCoursesByDay($schedule, $dayOff)
