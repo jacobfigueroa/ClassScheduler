@@ -335,7 +335,8 @@ class course
 				$course = $s;
 				$counter++;
 			}
-			if($course->Title != $s->Title)
+			//if($course->Title != $s->Title) // Does not work, because POLS 2313 and POLS 2314 have the same title but are different courses
+			if($course->Subject.$course->CourseNumber != $s->Subject.$s->CourseNumber)
 			{
 				$titleCourse = $s;
 				$result[$titleCounter] = $array;
