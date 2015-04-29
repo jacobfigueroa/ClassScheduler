@@ -310,6 +310,7 @@ function createCalendar (schedule) {
 		editable: false,
 		eventLimit: true, // allow "more" link when too many events
 		minTime: "07:00:00",
+		allDayText: "Online",
 		columnFormat: "ddd"
 	});
 
