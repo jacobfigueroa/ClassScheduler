@@ -24,13 +24,19 @@ if(sizeof($sections) > 0) {
 	$schedule = course::createAllPossibleSchedules($array);
 	$schedule = course::removeOverlappingCourses($schedule);
 
+	if(sizeof($schedule) == 0) {
+		$errors[] = "No courses meet your preferences.";
+	}
+
 	
 	if ($blockSchedule == "yes") {
 		$schedule = course::removeNonBlockSchedules($schedule);
+		if(sizeof($schedule) == 0) {
+			$errors[] = "The courses that you've entered do not allow for a block schedule to be generated.";
+		}
 	}
-
 } else {
-	$errors[] = "No courses meet your preferences";
+	$errors[] = "No courses meet your preferences.";
 }
 
 //Check to see if a course is missing
