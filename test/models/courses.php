@@ -369,7 +369,7 @@ class course
 	        $size *= sizeof($array);
 	    }
 
-	    $scheduleLimit = 20000;
+	    $scheduleLimit = 30000;
 	    if($size > $scheduleLimit) {
 	    	course::$errors[] = "Too many schedules generated, please input some preferences";
 	    	return $result;
