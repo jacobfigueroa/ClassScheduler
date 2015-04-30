@@ -28,17 +28,20 @@ if(sizeof($sections) > 0) {
 		$errors[] = "No courses meet your preferences.";
 	}
 
-	
-	if ($blockSchedule == "yes") {
-		$schedule = course::removeNonBlockSchedules($schedule);
-		if(sizeof($schedule) == 0) {
-			$errors[] = "The courses that you've entered do not allow for a block schedule to be generated.";
+	if(sizeof(course::getErrors()) > 0) {
+		//do nothing
+	} else {
+		if ($blockSchedule == "yes") {
+			$schedule = course::removeNonBlockSchedules($schedule);
+			if(sizeof($schedule) == 0) {
+				$errors[] = "The courses that you've entered do not allow for a block schedule to be generated.";
+			}
 		}
-	}
-	if ($blockSchedule == "no") {
-		$schedule = course::removeBlockSchedules($schedule);
-		if(sizeof($schedule) == 0) {
-			$errors[] = "The courses that you've entered do not allow for a schedule with gaps to be generated.";
+		if ($blockSchedule == "no") {
+			$schedule = course::removeBlockSchedules($schedule);
+			if(sizeof($schedule) == 0) {
+				$errors[] = "The courses that you've entered do not allow for a schedule with gaps to be generated.";
+			}
 		}
 	}
 } else {
