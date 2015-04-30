@@ -107,9 +107,9 @@ class course
 			$stmt = "";
 			
 			if ($c["Online"] === "yes") {
-				$stmt = $dbh->prepare( "SELECT * FROM ".course::$tableName." WHERE Subject = :Subject AND CourseNumber = :CourseNumber AND Section LIKE '%L'" );
-			} else if ($c["Online"] === "no") {
-				$stmt = $dbh->prepare( "SELECT * FROM ".course::$tableName." WHERE Subject = :Subject AND CourseNumber = :CourseNumber AND Section NOT LIKE '%L'" );
+			  	$stmt = $dbh->prepare( "SELECT * FROM ".course::$tableName." WHERE Subject = :Subject AND CourseNumber = :CourseNumber AND Section LIKE '%L'" );
+			} else if ($c["Online"] === "no") {	
+				$stmt = $dbh->prepare( "SELECT * FROM ".course::$tableName." WHERE Subject = :Subject AND CourseNumber = :CourseNumber AND Days != '' AND Start != '0' AND End != '0'" );
 			} else {
 				$stmt = $dbh->prepare( "SELECT * FROM ".course::$tableName." WHERE Subject = :Subject AND CourseNumber = :CourseNumber" );
 			}
@@ -124,6 +124,12 @@ class course
 				$course = new course();
 				$course->copyFromRow($row);
 				$result[] = $course;
+			}
+
+			if ($c["Online"] === "yes") {
+				if(sizeof($result) === 0) {
+					course::$errors[] = "No online courses available for " . $c["Subject"] . " " . $c["CourseNumber"];
+				}
 			}
 		}
 		return $result;
@@ -189,22 +195,6 @@ class course
 		}
 		
 		return $result;
-	}
-	
-	static function returnDay($day)
-	{
-		if($day == 1)
-			$dayOff = 'M';
-		if($day == 2)
-			$dayOff = 'T';
-		if($day == 3)
-			$dayOff = 'W';
-		if($day == 4)
-			$dayOff = 'R';
-		else
-			$dayOff = 'F';
-		return $dayOff;
-	
 	}
 	
 	static function removeCoursesByDay($schedule, $dayOff)
@@ -287,7 +277,7 @@ class course
 					for($i = 0; $i < $counter; $i++)
 					{
 					//calls the timeoverlap function to check for overlapping
-						if($s->timeOverlap($s, $result[$i]))
+						if(course::timeOverlap($s, $result[$i]))
 						{
 							$course = $s;
 							$result[] = $course;
@@ -315,8 +305,10 @@ class course
 			return true;
 		}
 		else
+		{
 		//else they do
 			return false;
+		}
 	}
 	
 	static function makeArray($schedule)
@@ -333,7 +325,8 @@ class course
 				$course = $s;
 				$counter++;
 			}
-			if($course->Title != $s->Title)
+			//if($course->Title != $s->Title) // Does not work, because POLS 2313 and POLS 2314 have the same title but are different courses
+			if($course->Subject.$course->CourseNumber != $s->Subject.$s->CourseNumber)
 			{
 				$titleCourse = $s;
 				$result[$titleCounter] = $array;
@@ -374,6 +367,12 @@ class course
 	    foreach ($arrays as $array)
 	    {
 	        $size *= sizeof($array);
+	    }
+
+	    $scheduleLimit = 30000;
+	    if($size > $scheduleLimit) {
+	    	course::$errors[] = "Too many schedules generated, please input some preferences";
+	    	return $result;
 	    }
 
 	    #Make each schedule
@@ -420,12 +419,12 @@ class course
 				{
 					if ($course1 !== $course2)
 					{
-						#if($course1->Days === $course2->Days || strpos($course1->Days, $course2->Days) !== FALSE ||strpos($course2->Days, $course1->Days) !== FALSE)
+						//if($course1->Days === $course2->Days || strpos($course1->Days, $course2->Days) !== FALSE ||strpos($course2->Days, $course1->Days) !== FALSE)
 						if(course::daysOverLap($course1, $course2))
 						{
 							if (strpos($course1->Section, 'L') === FALSE)
 							{
-								if(!course::timeoverlap($course1,$course))
+								if(!course::timeOverlap($course1,$course2))
 								{
 									$courseOverlap = true;
 								}	
@@ -448,6 +447,19 @@ class course
 			return FALSE;
 		if ($course1->Days === $course2->Days)
 			return TRUE;
+
+		// //New method
+		// $course1Days = explode(" ", $course1->Days);
+
+		// //Check if any character in $course1->Days exists in $course2->Days
+		// foreach($course1Days as $course1Day) {
+		// 	if (strpos($course2->Days, $course1Day) !== FALSE) {
+		// 		return TRUE;
+		// 	}
+		// }
+
+
+		//old method
 		if(strpos($course1->Days, $course2->Days) !== FALSE)
 			return TRUE;
 		if(strpos($course2->Days, $course1->Days) !== FALSE)
@@ -459,30 +471,71 @@ class course
 	{
 		foreach($schedules as $s)
 		{
-			if(course::isBlockSchedule($s)) // Right now it always returns true, so the schedule is unchanged
+			if(course::isBlockSchedule($s)) {
 				$result[] = $s;
+			}
+			//echo "<br><br><br>";
+		}
+		return $result;
+	}
+
+	static function removeBlockSchedules($schedules)
+	{
+		foreach($schedules as $s)
+		{
+			if(!course::isBlockSchedule($s)) {
+				$result[] = $s;
+			}
+			//echo "<br><br><br>";
 		}
 		return $result;
 	}
 
 	static function isBlockSchedule($schedule)
 	{
-		/*
 		//Sort the schedule by start time
+
 		usort($schedule, "course::sortByTime");
 
-		$days = "MTWRF";
+		// foreach($schedule as $c) {
+		// 	echo $c->Subject . " " . $c->CourseNumber . " " . $c->Start . "<br>";
+		// }
 
+
+		$days = ["M","T","W","R","F"];
+
+		// Go through each day
 		foreach($days as $day) {
-			echo $day;
-		}*/
+			//echo "<br>" . $day . "<br>";
 
+			$tempArray = []; //Used to hold courses that are in $day
 
-		//Check to see if its a block schedule
-		//If it is //(Right now it always returns trues)
+			foreach($schedule as $c) {	
+				if( strpos($c->Days, $day) !== FALSE ) {
+					$tempArray[] = $c;
+					//echo $c->Subject . " " . $c->CourseNumber . " " . $c->Start . "<br>";
+				}
+			}
+
+			for($i = 0; $i < sizeof($tempArray)-1; $i++) {
+				if($day === "T" || $day === "R") { //Check for lunch break. 12:00 pm - 1:00 PM
+					if( $tempArray[$i]->End == 1150 && $tempArray[$i+1]->Start == 1310 || $tempArray[$i]->End == 1150 && $tempArray[$i+1]->Start == 1300) {
+						// Lunch break, ignore
+						continue;
+					}
+				}
+				if( ($tempArray[$i+1]->Start - $tempArray[$i]->End) - 40 > 45 ) { //Theres a gap bigger than 45 minutes, so its not a block schedule
+					return FALSE;
+				}
+			}
+		}
 		return TRUE;
-		//else
-		return FALSE;
+
+		// //Check to see if its a block schedule
+		// //If it is //(Right now it always returns trues)
+		// return TRUE;
+		// //else
+		// return FALSE;
 	}
 
 	static function getErrors()
@@ -496,6 +549,7 @@ class course
         	return 0;
     	}
     	return ($a->Start < $b->Start) ? -1 : 1;
+    	//return ($a->Start < $b->Start) ? 1 : -1;
 	}
 }
 ?>

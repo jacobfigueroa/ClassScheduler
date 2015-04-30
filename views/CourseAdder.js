@@ -12,6 +12,7 @@ $("#courseSelector").on("change","select", function(){
 		var id = $(this).attr("id")
 		var idNumber = id.substr(id.length-1,id.length-1) //start,end. Returns last character
 
+
 		//Send subject selected, return list of courses associated with that subject
 		$.ajax( { 
 			'type' : 'POST',
@@ -51,14 +52,14 @@ $("#courseSelector").on("change","select", function(){
 
 				var onlineRadioButton = $("<input>")
 				onlineRadioButton.attr("type","radio")
-				onlineRadioButton.attr("name", "onlineRadioButton"+courseCount)
+				onlineRadioButton.attr("name", "onlineRadioButton"+idNumber)
 				onlineRadioButton.attr("value","yes")
 				$(courseList).append(onlineRadioButton);
 				$(courseList).append(" Yes ");
 
 				onlineRadioButton = $("<input>")
 				onlineRadioButton.attr("type","radio")
-				onlineRadioButton.attr("name", "onlineRadioButton"+courseCount)
+				onlineRadioButton.attr("name", "onlineRadioButton"+idNumber)
 				onlineRadioButton.attr("value","no")
 				$(courseList).append(onlineRadioButton);
 				$(courseList).append(" No ");
@@ -66,19 +67,22 @@ $("#courseSelector").on("change","select", function(){
 
 				onlineRadioButton = $("<input>")
 				onlineRadioButton.attr("type","radio")
-				onlineRadioButton.attr("name", "onlineRadioButton"+courseCount)
+				onlineRadioButton.attr("name", "onlineRadioButton"+idNumber)
 				onlineRadioButton.attr("value","indifferent")
 				onlineRadioButton.attr("checked","checked")
 				$(courseList).append(onlineRadioButton);
 				$(courseList).append(" Indifferent");
+
 			});
 	}
 });
 
 $("#addClass").click(function() {
+
 	courseCount += 1
 
-	if (courseCount < 6) {
+	var maxCourseCount = 6;
+	if (courseCount < maxCourseCount) {
 
 		var newCourse = $("#course0").clone()
 
@@ -93,6 +97,7 @@ $("#addClass").click(function() {
 	
 	} else {
 		//Error message saying too many coursess
+		alert("You may only enter in " + courseCount + " classes.");
 	}
 });
 
@@ -310,6 +315,7 @@ function createCalendar (schedule) {
 		editable: false,
 		eventLimit: true, // allow "more" link when too many events
 		minTime: "07:00:00",
+		allDayText: "Online",
 		columnFormat: "ddd"
 	});
 
