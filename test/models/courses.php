@@ -107,8 +107,8 @@ class course
 			$stmt = "";
 			
 			if ($c["Online"] === "yes") {
-				$stmt = $dbh->prepare( "SELECT * FROM ".course::$tableName." WHERE Subject = :Subject AND CourseNumber = :CourseNumber AND Days = '' AND Start = '0' AND End = '0'" );
-			} else if ($c["Online"] === "no") {
+			  	$stmt = $dbh->prepare( "SELECT * FROM ".course::$tableName." WHERE Subject = :Subject AND CourseNumber = :CourseNumber AND Section LIKE '%L'" );
+			} else if ($c["Online"] === "no") {	
 				$stmt = $dbh->prepare( "SELECT * FROM ".course::$tableName." WHERE Subject = :Subject AND CourseNumber = :CourseNumber AND Days != '' AND Start != '0' AND End != '0'" );
 			} else {
 				$stmt = $dbh->prepare( "SELECT * FROM ".course::$tableName." WHERE Subject = :Subject AND CourseNumber = :CourseNumber" );
