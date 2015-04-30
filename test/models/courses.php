@@ -479,6 +479,18 @@ class course
 		return $result;
 	}
 
+	static function removeBlockSchedules($schedules)
+	{
+		foreach($schedules as $s)
+		{
+			if(!course::isBlockSchedule($s)) {
+				$result[] = $s;
+			}
+			//echo "<br><br><br>";
+		}
+		return $result;
+	}
+
 	static function isBlockSchedule($schedule)
 	{
 		//Sort the schedule by start time
