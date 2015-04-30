@@ -78,9 +78,11 @@ $("#courseSelector").on("change","select", function(){
 });
 
 $("#addClass").click(function() {
+
 	courseCount += 1
 
-	if (courseCount < 6) {
+	var maxCourseCount = 6;
+	if (courseCount < maxCourseCount) {
 
 		var newCourse = $("#course0").clone()
 
@@ -95,6 +97,7 @@ $("#addClass").click(function() {
 	
 	} else {
 		//Error message saying too many coursess
+		alert("You may only enter in " + courseCount + " classes.");
 	}
 });
 
